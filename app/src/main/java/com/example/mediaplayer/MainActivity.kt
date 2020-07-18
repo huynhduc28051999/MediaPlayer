@@ -1,0 +1,185 @@
+package com.example.mediaplayer
+
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.media.MediaPlayer
+import android.os.Build
+import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.song_ticket.view.*
+import java.util.*
+
+
+class MainActivity : AppCompatActivity() {
+    var listSongs = ArrayList<SongInfo>()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewManager: RecyclerView.LayoutManager
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        checkUserPermission()
+
+        var myTracking = MySongTrack()
+        myTracking.start()
+        sbProgress?.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seek: SeekBar,
+                                           progress: Int, fromUser: Boolean) {
+            }
+
+            override fun onStartTrackingTouch(seek: SeekBar) {
+                // write custom code for progress is started
+            }
+
+            override fun onStopTrackingTouch(seek: SeekBar) {
+                // write custom code for progress is stopped
+                var mp = Service.mp
+                if(mp != null){
+                    Service.seekToProgress(seek.progress)
+                }
+            }
+        })
+    }
+
+    inner class MySongAdapter(private val myDataset: ArrayList<SongInfo>) :
+        RecyclerView.Adapter<MySongAdapter.MyViewHolder>() {
+
+        inner class MyViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+            var tvSongName: TextView = view.tvSongName
+            var tvAuthor: TextView = view.tvAuthor
+            var button: Button = view.buttonPlay
+        }
+
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): MySongAdapter.MyViewHolder {
+            val textView = LayoutInflater.from(parent.context)
+                .inflate(R.layout.song_ticket, parent, false) as View
+            return MyViewHolder(textView)
+        }
+
+        override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+            val song = myDataset[position]
+            holder.tvSongName.text = song.mTitle
+            holder.tvAuthor.text =song.mAuthorName
+            holder.button.setOnClickListener {
+                    if (holder.button.text == "Stop") {
+                        Service.stopPlay()
+                        holder.button.text = "Start"
+                    } else {
+                        if (Service.mp != null) {
+                            Service.stopPlay()
+                        }
+                        Service.createMediaPlayer(MediaPlayer())
+                        val mp = Service.mp
+                        try {
+                            mp!!.setDataSource(song.mSongURL)
+                            mp!!.prepare()
+                            mp!!.start()
+                            holder.button.text = "Stop"
+                            sbProgress.max = mp!!.duration
+                            var intent = Intent(this@MainActivity, PlayerProcessing::class.java)
+                            val bundle = Bundle()
+                            bundle.putString("mTitle", song.mTitle)
+                            bundle.putString("mAuthorName", song.mAuthorName)
+                            bundle.putString("mSongURL", song.mSongURL)
+                            bundle.putString("mSize", song.mSize.toString())
+                            intent.putExtras(bundle)
+                            startActivity(intent)
+                        } catch (ex: Exception) {
+                            Log.e("Player", ex.toString())
+                        }
+                }
+            }
+        }
+
+        override fun getItemCount() = myDataset.size
+    }
+    inner class MySongTrack(): Thread() {
+
+        override fun run() {
+            while (true) {
+                try {
+                    Thread.sleep(1000)
+                } catch (ex: Exception) {
+
+                }
+                runOnUiThread {
+                    val mp = Service.mp
+                    if (mp !== null) {
+                        sbProgress.max = mp.duration
+                        sbProgress.progress = mp.currentPosition
+                        Service.setSbProgress(mp.currentPosition)
+                    }
+                }
+            }
+        }
+    }
+    private val REQUEST_CODE_ASK_PERMISSION = 123
+    private fun checkUserPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    !=  PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_ASK_PERMISSION)
+                return
+            }
+            loadSong()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_CODE_ASK_PERMISSION -> if (grantResults[0] === PackageManager.PERMISSION_GRANTED) {
+                loadSong()
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+    private fun loadSong() {
+        val allSongURI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val selection = MediaStore.Audio.Media.IS_MUSIC  + "!= 0"
+        val cursor = contentResolver.query(allSongURI,null , selection, null, null)
+        if (cursor !== null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    val songURL = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                    val songAuthor = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                    val songName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                    val time = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    listSongs.add(SongInfo(songName, songAuthor, songURL, time.toInt()))
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+            viewManager = LinearLayoutManager(this)
+            viewAdapter = MySongAdapter(listSongs)
+
+            recyclerView = findViewById<RecyclerView>(R.id.listSongView).apply {
+                setHasFixedSize(true)
+                layoutManager = viewManager
+                adapter = viewAdapter
+
+            }
+        }
+    }
+}
