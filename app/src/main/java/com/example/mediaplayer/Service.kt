@@ -52,5 +52,33 @@ public class Service {
         fun setSongList (list: ArrayList<SongInfo>) {
             this.listSongs = list
         }
+        fun nextSong() {
+            if (!isStop) {
+                stopPlay()
+            }
+            var nextPosition = this.currentPosition + 1
+            if (nextPosition >= this.listSongs.size) {
+                nextPosition = 0
+            }
+            mp.setDataSource(this.listSongs[nextPosition].mSongURL)
+            this.currentPosition = nextPosition
+            mp.prepare()
+            mp.start()
+            this.isStop = false
+        }
+        fun preSong() {
+            if (!isStop) {
+                stopPlay()
+            }
+            var prePosition = this.currentPosition - 1
+            if (prePosition < 0) {
+                prePosition = this.listSongs.size - 1
+            }
+            mp.setDataSource(this.listSongs[prePosition].mSongURL)
+            this.currentPosition = prePosition
+            mp.prepare()
+            mp.start()
+            this.isStop = false
+        }
     }
 }

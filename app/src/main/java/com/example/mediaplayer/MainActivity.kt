@@ -1,27 +1,27 @@
 package com.example.mediaplayer
 
+import android.content.ContentUris
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaPlayer
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.song_ticket.view.*
-import java.util.*
-import kotlin.collections.ArrayList
+import java.io.FileDescriptor
 
 
 class MainActivity : AppCompatActivity() {
@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
             var tvSongName: TextView = view.tvSongName
             var tvAuthor: TextView = view.tvAuthor
             var button: Button = view.buttonPlay
+            var image: ImageView = view.imageSong
         }
 
         override fun onCreateViewHolder(
@@ -74,6 +75,9 @@ class MainActivity : AppCompatActivity() {
             val song = myDataset[position]
             holder.tvSongName.text = song.mTitle
             holder.tvAuthor.text =song.mAuthorName
+            if (getAlbumart(song.mInageId) != null ){
+                holder.image.setImageBitmap(getAlbumart(song.mInageId))
+            }
             holder.button.setOnClickListener {
                 try {
                     Service.startPlay(position)
@@ -145,6 +149,21 @@ class MainActivity : AppCompatActivity() {
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
+    fun getAlbumart(album_id: Long?): Bitmap? {
+        var bm: Bitmap? = null
+        try {
+            val sArtworkUri: Uri = Uri
+                .parse("content://media/external/audio/albumart")
+            val uri: Uri = ContentUris.withAppendedId(sArtworkUri, album_id!!)
+            val pfd: ParcelFileDescriptor? = contentResolver.openFileDescriptor(uri, "r")
+            if (pfd != null) {
+                val fd: FileDescriptor = pfd.fileDescriptor
+                bm = BitmapFactory.decodeFileDescriptor(fd)
+            }
+        } catch (e: java.lang.Exception) {
+        }
+        return bm
+    }
     private fun loadSong() {
         val allSongURI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val selection = MediaStore.Audio.Media.IS_MUSIC  + "!= 0"
@@ -157,7 +176,8 @@ class MainActivity : AppCompatActivity() {
                     val songAuthor = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
                     val songName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
                     val time = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    list.add(SongInfo(songName, songAuthor, songURL, time.toInt()))
+                    val imageId = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+                    list.add(SongInfo(songName, songAuthor, songURL, time.toInt(), imageId.toLong()))
                 } while (cursor.moveToNext())
             }
             cursor.close()

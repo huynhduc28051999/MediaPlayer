@@ -53,6 +53,7 @@
         android:layout_weight="3"
         android:orientation="horizontal">
         <Button
+            android:id="@+id/buttonPre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="pre"/>
@@ -67,6 +68,7 @@
             android:layout_height="wrap_content"
             android:text="play"/>
         <Button
+            android:id="@+id/buttonNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="next"/>

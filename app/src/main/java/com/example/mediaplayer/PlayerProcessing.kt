@@ -39,6 +39,18 @@ class PlayerProcessing : AppCompatActivity() {
                 }
             }
         }
+        buttonNext.setOnClickListener {
+            Service.nextSong()
+            tvSongName.text = Service.listSongs[Service.currentPosition].mTitle
+            tvAuthor.text = Service.listSongs[Service.currentPosition].mAuthorName
+            sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
+        }
+        buttonPre.setOnClickListener {
+            Service.preSong()
+            tvSongName.text = Service.listSongs[Service.currentPosition].mTitle
+            tvAuthor.text = Service.listSongs[Service.currentPosition].mAuthorName
+            sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
+        }
         sbProgressPlayer?.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seek: SeekBar,
