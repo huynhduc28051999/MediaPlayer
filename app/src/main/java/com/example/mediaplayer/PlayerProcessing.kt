@@ -21,16 +21,22 @@ class PlayerProcessing : AppCompatActivity() {
         buttonPlay.setOnClickListener {
             if (buttonPlay.text == "Stop") {
                 Service.stopPlay()
+                buttonPause.text = "Pause"
                 buttonPlay.text = "Start"
+            } else {
+                Service.startPlay(Service.currentPosition)
+                buttonPlay.text = "Stop"
             }
         }
         buttonPause.setOnClickListener {
-            if (buttonPause.text == "Pause") {
-                Service.pausePlay()
-                buttonPause.text = "Resume"
-            } else {
-                Service.resumePlay()
-                buttonPause.text = "Pause"
+            if (buttonPlay.text == "Stop") {
+                if (buttonPause.text == "Pause") {
+                    Service.pausePlay()
+                    buttonPause.text = "Resume"
+                } else {
+                    Service.resumePlay()
+                    buttonPause.text = "Pause"
+                }
             }
         }
         sbProgressPlayer?.setOnSeekBarChangeListener(object :
@@ -45,10 +51,7 @@ class PlayerProcessing : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seek: SeekBar) {
                 // write custom code for progress is stopped
-                var mp = Service.mp
-                if(mp != null){
-                    Service.seekToProgress(seek.progress)
-                }
+                Service.seekToProgress(seek.progress)
             }
         })
         var myTracking = MySongTrack()
@@ -64,9 +67,11 @@ class PlayerProcessing : AppCompatActivity() {
 
                 }
                 runOnUiThread {
+                    if (!Service.isStop) {
+                        Service.setSbProgress(Service.mp.currentPosition)
+                    }
                     val progress = Service.progress
                     sbProgressPlayer.progress = progress
-                    Service.setSbProgress(Service.mp!!.currentPosition)
                 }
             }
         }

@@ -21,10 +21,10 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.song_ticket.view.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
-    var listSongs = ArrayList<SongInfo>()
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -47,10 +47,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seek: SeekBar) {
                 // write custom code for progress is stopped
-                var mp = Service.mp
-                if(mp != null){
                     Service.seekToProgress(seek.progress)
-                }
             }
         })
     }
@@ -78,32 +75,19 @@ class MainActivity : AppCompatActivity() {
             holder.tvSongName.text = song.mTitle
             holder.tvAuthor.text =song.mAuthorName
             holder.button.setOnClickListener {
-                    if (holder.button.text == "Stop") {
-                        Service.stopPlay()
-                        holder.button.text = "Start"
-                    } else {
-                        if (Service.mp != null) {
-                            Service.stopPlay()
-                        }
-                        Service.createMediaPlayer(MediaPlayer())
-                        val mp = Service.mp
-                        try {
-                            mp!!.setDataSource(song.mSongURL)
-                            mp!!.prepare()
-                            mp!!.start()
-                            holder.button.text = "Stop"
-                            sbProgress.max = mp!!.duration
-                            var intent = Intent(this@MainActivity, PlayerProcessing::class.java)
-                            val bundle = Bundle()
-                            bundle.putString("mTitle", song.mTitle)
-                            bundle.putString("mAuthorName", song.mAuthorName)
-                            bundle.putString("mSongURL", song.mSongURL)
-                            bundle.putString("mSize", song.mSize.toString())
-                            intent.putExtras(bundle)
-                            startActivity(intent)
-                        } catch (ex: Exception) {
-                            Log.e("Player", ex.toString())
-                        }
+                try {
+                    Service.startPlay(position)
+                    sbProgress.max = Service.mp.duration
+                    var intent = Intent(this@MainActivity, PlayerProcessing::class.java)
+                    val bundle = Bundle()
+                    bundle.putString("mTitle", song.mTitle)
+                    bundle.putString("mAuthorName", song.mAuthorName)
+                    bundle.putString("mSongURL", song.mSongURL)
+                    bundle.putString("mSize", song.mSize.toString())
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                } catch (ex: java.lang.Exception) {
+                    Log.e("Player", ex.toString())
                 }
             }
         }
@@ -120,8 +104,13 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 runOnUiThread {
-                    val mp = Service.mp
-                    if (mp !== null) {
+                    val isStop = Service.isStop
+                    if (Service.isStop) {
+                        sbProgress.max = 0
+                        sbProgress.progress = 0
+                        Service.setSbProgress(0)
+                    } else {
+                        val mp = Service.mp
                         sbProgress.max = mp.duration
                         sbProgress.progress = mp.currentPosition
                         Service.setSbProgress(mp.currentPosition)
@@ -160,6 +149,7 @@ class MainActivity : AppCompatActivity() {
         val allSongURI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val selection = MediaStore.Audio.Media.IS_MUSIC  + "!= 0"
         val cursor = contentResolver.query(allSongURI,null , selection, null, null)
+        var list = ArrayList<SongInfo> ()
         if (cursor !== null) {
             if (cursor.moveToFirst()) {
                 do {
@@ -167,12 +157,13 @@ class MainActivity : AppCompatActivity() {
                     val songAuthor = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
                     val songName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
                     val time = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    listSongs.add(SongInfo(songName, songAuthor, songURL, time.toInt()))
+                    list.add(SongInfo(songName, songAuthor, songURL, time.toInt()))
                 } while (cursor.moveToNext())
             }
             cursor.close()
+            Service.setSongList(list)
             viewManager = LinearLayoutManager(this)
-            viewAdapter = MySongAdapter(listSongs)
+            viewAdapter = MySongAdapter(list)
 
             recyclerView = findViewById<RecyclerView>(R.id.listSongView).apply {
                 setHasFixedSize(true)
