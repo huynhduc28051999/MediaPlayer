@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_player_processing.*
+import java.util.concurrent.TimeUnit
 
 
 class PlayerProcessing : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        var isPause: Boolean = false
+        var isStop: Boolean = false
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player_processing)
         val intent = intent
@@ -15,28 +18,29 @@ class PlayerProcessing : AppCompatActivity() {
         if (bundle !== null){
             tvSongName.text = bundle.getString("mTitle")
             tvAuthor.text = bundle.getString("mAuthor")
-            sbProgressPlayer.max = bundle.getString("mSize")!!.toInt()
-            buttonPlay.text = "Stop"
+            val size = bundle.getString("mSize")
+            sbProgressPlayer.max = size!!.toInt()
+            textviewNumber2.text = convertMilliseconds(size.toLong())
         }
-        buttonPlay.setOnClickListener {
-            if (buttonPlay.text == "Stop") {
+        buttonStop.setOnClickListener {
+            if (!isStop) {
                 Service.stopPlay()
-                buttonPause.text = "Pause"
-                buttonPlay.text = "Start"
-            } else {
-                Service.startPlay(Service.currentPosition)
-                buttonPlay.text = "Stop"
+                isStop = true
+                isPause = true
             }
         }
         buttonPause.setOnClickListener {
-            if (buttonPlay.text == "Stop") {
-                if (buttonPause.text == "Pause") {
+            if (!isStop) {
+                if (!isPause) {
                     Service.pausePlay()
-                    buttonPause.text = "Resume"
+                    isPause = true
                 } else {
                     Service.resumePlay()
-                    buttonPause.text = "Pause"
+                    isPause = false
                 }
+            } else {
+                Service.startPlay(Service.currentPosition)
+                isStop = false
             }
         }
         buttonNext.setOnClickListener {
@@ -69,6 +73,11 @@ class PlayerProcessing : AppCompatActivity() {
         var myTracking = MySongTrack()
         myTracking.start()
     }
+    fun convertMilliseconds(milliseconds: Long): String {
+        val minutes = milliseconds / 1000 / 60
+        val seconds = milliseconds / 1000 % 60
+        return "${minutes}:${seconds}"
+    }
     inner class MySongTrack(): Thread() {
 
         override fun run() {
@@ -84,6 +93,7 @@ class PlayerProcessing : AppCompatActivity() {
                     }
                     val progress = Service.progress
                     sbProgressPlayer.progress = progress
+                    textviewNumber1.text = convertMilliseconds(progress.toLong())
                 }
             }
         }

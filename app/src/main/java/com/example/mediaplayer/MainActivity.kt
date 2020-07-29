@@ -20,7 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.song_ticket.view.*
+import kotlinx.android.synthetic.main.item_listmusic.view.*
 import java.io.FileDescriptor
 
 
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         inner class MyViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             var tvSongName: TextView = view.tvSongName
             var tvAuthor: TextView = view.tvAuthor
-            var button: Button = view.buttonPlay
+            var play: ImageView = view.buttonPlay
             var image: ImageView = view.imageSong
         }
 
@@ -67,18 +67,28 @@ class MainActivity : AppCompatActivity() {
             viewType: Int
         ): MySongAdapter.MyViewHolder {
             val textView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.song_ticket, parent, false) as View
+                .inflate(R.layout.item_listmusic, parent, false) as View
             return MyViewHolder(textView)
         }
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             val song = myDataset[position]
-            holder.tvSongName.text = song.mTitle
-            holder.tvAuthor.text =song.mAuthorName
+            var maxTitle = 0
+            var maxAuthorName = 0
+            song.mTitle.let {
+                it -> maxTitle = it!!.length
+            }
+            if (maxTitle > 20) maxTitle = 20
+            song.mAuthorName.let {
+                    it -> maxAuthorName = it!!.length
+            }
+            if (maxAuthorName > 20) maxAuthorName = 20
+            holder.tvSongName.text = song.mTitle?.substring(0, maxTitle)
+            holder.tvAuthor.text =song.mAuthorName?.substring(0, maxAuthorName)
             if (getAlbumart(song.mInageId) != null ){
                 holder.image.setImageBitmap(getAlbumart(song.mInageId))
             }
-            holder.button.setOnClickListener {
+            holder.play.setOnClickListener {
                 try {
                     Service.startPlay(position)
                     sbProgress.max = Service.mp.duration
