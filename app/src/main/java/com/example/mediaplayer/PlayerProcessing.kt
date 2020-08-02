@@ -21,12 +21,14 @@ class PlayerProcessing : AppCompatActivity() {
             val size = bundle.getString("mSize")
             sbProgressPlayer.max = size!!.toInt()
             textviewNumber2.text = convertMilliseconds(size.toLong())
+            buttonPause.setImageResource(R.drawable.ic_pause_circle)
         }
         buttonStop.setOnClickListener {
             if (!isStop) {
                 Service.stopPlay()
                 isStop = true
                 isPause = true
+                buttonPause.setImageResource(R.drawable.ic_playcircle)
             }
         }
         buttonPause.setOnClickListener {
@@ -34,13 +36,16 @@ class PlayerProcessing : AppCompatActivity() {
                 if (!isPause) {
                     Service.pausePlay()
                     isPause = true
+                    buttonPause.setImageResource(R.drawable.ic_playcircle)
                 } else {
                     Service.resumePlay()
                     isPause = false
+                    buttonPause.setImageResource(R.drawable.ic_pause_circle)
                 }
             } else {
                 Service.startPlay(Service.currentPosition)
                 isStop = false
+                buttonPause.setImageResource(R.drawable.ic_pause_circle)
             }
         }
         buttonNext.setOnClickListener {

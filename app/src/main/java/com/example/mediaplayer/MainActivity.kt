@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_listmusic.view.*
 import java.io.FileDescriptor
@@ -179,6 +180,7 @@ class MainActivity : AppCompatActivity() {
         val selection = MediaStore.Audio.Media.IS_MUSIC  + "!= 0"
         val cursor = contentResolver.query(allSongURI,null , selection, null, null)
         var list = ArrayList<SongInfo> ()
+        val db = DatabaseHandlerMusic(this)
         if (cursor !== null) {
             if (cursor.moveToFirst()) {
                 do {
@@ -187,11 +189,14 @@ class MainActivity : AppCompatActivity() {
                     val songName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
                     val time = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                     val imageId = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
-                    list.add(SongInfo(songName, songAuthor, songURL, time.toInt(), imageId.toLong()))
+                    val song = SongInfo(songName, songAuthor, songURL, time.toInt(), imageId.toLong())
+                    list.add(song)
                 } while (cursor.moveToNext())
             }
             cursor.close()
             Service.setSongList(list)
+            list.forEach { db.addSong(it)}
+            db.close()
             viewManager = LinearLayoutManager(this)
             viewAdapter = MySongAdapter(list)
 
