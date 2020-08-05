@@ -1,11 +1,18 @@
 package com.example.duan
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.duan.adapter.adapteralbum
@@ -17,7 +24,7 @@ import com.example.duan.dbhelper.relationdbhelper
 import com.example.duan.model.album_model
 import com.example.duan.model.music_model
 import com.google.android.material.appbar.MaterialToolbar
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.layout_home.*
 
 class MainActivity : AppCompatActivity() {
     private var mlistAlbum = mutableListOf<album_model>()//Danh sach cac album
@@ -28,8 +35,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.layout_home)
         album=albumdbhelper(this)
+        album.insertAlbum(album_model(8,"Album1",0))
+        album.insertAlbum(album_model(8,"Album1",0))
+        album.insertAlbum(album_model(8,"Album1",0))
         album.insertAlbum(album_model(8,"Album1",0))
         mlistAlbum=album.readAllAlbum()//Danh sach cac album co trong database
         home(topAppBar,this)
@@ -40,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         music.insertMusic(music_model(1,"http://...","Vo Nguoi Ta","Phan Manh Quynh",12,0))
         mlistSong=music.readAllMusic()//Danh sach bai nhac co trong database
         song(mlistSong,rv_song,this)
+
     }
 }
 
@@ -57,7 +68,13 @@ fun home(topAppBar: MaterialToolbar,context: Context) {
             }
             R.id.search -> {
                 // Handle search icon press
-                Log.i("a", "da nhan")
+                val navTop = (context as Activity).findViewById<View>(R.id.nav_top)
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                if ((navTop as ViewGroup).childCount === 1) {
+                    inflater.inflate(R.layout.textview, navTop as LinearLayout);
+                } else {
+                    (navTop as ViewGroup).removeViewAt(1)
+                }
                 true
             }
             R.id.more -> {
