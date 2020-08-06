@@ -88,14 +88,7 @@ tools:context=".MainActivity"
         android:background="@drawable/btn_bg"
         android:layout_marginHorizontal="12dp"
         />
-    <ImageButton
-        android:id="@+id/buttonStop"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_baseline_stop_24"
-        android:background="@drawable/btn_bg"
-        android:layout_marginHorizontal="12dp"
-        />
+
     <ImageButton
         android:id="@+id/buttonNext"
         android:layout_width="50dp"

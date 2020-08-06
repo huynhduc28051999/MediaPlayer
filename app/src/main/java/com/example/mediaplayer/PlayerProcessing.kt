@@ -23,14 +23,8 @@ class PlayerProcessing : AppCompatActivity() {
             textviewNumber2.text = convertMilliseconds(size.toLong())
             buttonPause.setImageResource(R.drawable.ic_pause_circle)
         }
-        buttonStop.setOnClickListener {
-            if (!isStop) {
-                Service.stopPlay()
-                isStop = true
-                isPause = true
-                buttonPause.setImageResource(R.drawable.ic_playcircle)
-            }
-        }
+
+
         buttonPause.setOnClickListener {
             if (!isStop) {
                 if (!isPause) {
@@ -103,4 +97,5 @@ class PlayerProcessing : AppCompatActivity() {
             }
         }
     }
+
 }

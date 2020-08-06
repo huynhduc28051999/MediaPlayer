@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity"
-   >
+    >
 
     <TextView
         android:id="@+id/textviewName"
@@ -17,6 +17,14 @@
         android:textColor="#000"
         android:textSize="30dp"
         android:textStyle="bold" />
+    <TextView
+        android:id="@+id/textviewName2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name Singer"
+        android:textColor="#000"
+        android:textSize="20dp"
+        />
 
     <ImageView
         android:id="@+id/imageSong"
@@ -25,74 +33,111 @@
         android:layout_marginVertical="12dp"
         android:src="@drawable/music" />
 
-    <LinearLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutPlayer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
+        app:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+            android:id="@+id/textLyrics"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:text="Lyrics"
+            android:textAllCaps="true"
+            android:textColor="#f000"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
+        <ImageButton
+            android:id="@+id/imagePlay"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="60dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_playcircle"
+            app:layout_constraintBottom_toTopOf="@+id/textLyrics"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@drawable/btn_bg"/>
+        <ImageButton
+            android:id="@+id/Previous"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_bg"
+            android:padding="4dp"
+            android:src="@drawable/ic_skip_previous"
+            app:layout_constraintBottom_toBottomOf="@+id/imagePlay"
+            app:layout_constraintEnd_toStartOf="@id/imagePlay"
+            app:layout_constraintTop_toTopOf="@+id/imagePlay"
+            android:layout_marginRight="15dp" />
+        <ImageButton
+            android:id="@+id/Next"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_bg"
+            android:padding="4dp"
+            android:src="@drawable/ic_skip_next"
+            app:layout_constraintBottom_toBottomOf="@+id/imagePlay"
+            app:layout_constraintStart_toEndOf="@+id/imagePlay"
+            app:layout_constraintTop_toTopOf="@+id/imagePlay"
+            android:layout_marginLeft="15dp" />
+        <ImageButton
+            android:id="@+id/Repeat"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_bg"
+            android:src="@drawable/ic_repeat"
+            app:layout_constraintBottom_toBottomOf="@id/imagePlay"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/imagePlay"
+            android:layout_marginLeft="20dp" />
+        <ImageButton
+            android:id="@+id/Favorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_bg"
+            android:src="@drawable/ic_favorite_border"
+            app:layout_constraintBottom_toBottomOf="@id/imagePlay"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/imagePlay"
+            android:layout_marginRight="20dp" />
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="25dp"
+            app:layout_constraintBottom_toTopOf="@id/imagePlay"/>
         <TextView
             android:id="@+id/textviewNumber1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="4dp"
             android:text="@string/zero"
-            android:textColor="#212121"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="7dp"
-            android:layout_marginEnd="7dp"
-            android:layout_weight="1" />
-
+            android:textColor="#f000"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/seekBar"
+            app:layout_constraintStart_toStartOf="@id/seekBar"
+            app:layout_constraintTop_toTopOf="parent"/>
         <TextView
             android:id="@+id/textviewNumber2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="4dp"
             android:text="@string/zero"
-            android:textColor="#212121"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginVertical="12dp">
-        <ImageButton
-            android:id="@+id/Previous"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_skip_previous"
-            android:background="@drawable/btn_bg"
-            android:layout_marginHorizontal="12dp"/>
-        <ImageButton
-            android:id="@+id/playCrircle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_playcircle"
-            android:background="@drawable/btn_bg"
-            android:layout_marginHorizontal="12dp"
-            />
-        <ImageButton
-            android:id="@+id/Next"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_skip_next"
-            android:background="@drawable/btn_bg"
-            android:layout_marginHorizontal="12dp"/>
-        <ImageButton
-            android:id="@+id/Favorite"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_favorite_border"
-            android:background="@drawable/btn_bg"
-            android:layout_marginLeft="10dp"/>
-
-    </LinearLayout>
+            android:textColor="#f000"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/seekBar"
+            app:layout_constraintEnd_toEndOf="@id/seekBar"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

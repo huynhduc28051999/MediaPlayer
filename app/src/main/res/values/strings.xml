@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MediaPlayer</string>
     <string name="zero">0:00</string>
+
 </resources>
