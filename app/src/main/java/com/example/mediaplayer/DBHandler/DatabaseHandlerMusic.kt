@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import com.example.mediaplayer.SongInfo
+import kotlin.math.log
 
 
 public class DatabaseHandlerMusic(context: Context?) :

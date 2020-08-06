@@ -8,7 +8,7 @@
     android:layout_margin="15dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="10dp"
-    tools:context=".MainActivity">
+    tools:context=".LoadAllSong">
 
     <RelativeLayout
         android:id="@+id/relative_layout"
@@ -16,13 +16,13 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/image_album"
+            android:id="@+id/img_album"
             android:layout_width="match_parent"
             android:layout_height="170dp"
             android:src="@mipmap/ic_launcher" />
 
         <TextView
-            android:id="@+id/name_album"
+            android:id="@+id/title_album"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

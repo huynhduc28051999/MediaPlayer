@@ -1,10 +1,10 @@
 package com.example.mediaplayer
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_player_processing.*
-import java.util.concurrent.TimeUnit
 
 
 class PlayerProcessing : AppCompatActivity() {
@@ -13,6 +13,8 @@ class PlayerProcessing : AppCompatActivity() {
         var isStop: Boolean = false
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player_processing)
+        setSupportActionBar(nav_bar_default as androidx.appcompat.widget.Toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val intent = intent
         val bundle = intent.extras
         if (bundle !== null){
@@ -29,6 +31,8 @@ class PlayerProcessing : AppCompatActivity() {
                 isStop = true
                 isPause = true
                 buttonPause.setImageResource(R.drawable.ic_playcircle)
+                sbProgressPlayer.progress = 0
+                textviewNumber1.text = convertMilliseconds(0)
             }
         }
         buttonPause.setOnClickListener {
@@ -45,17 +49,24 @@ class PlayerProcessing : AppCompatActivity() {
             } else {
                 Service.startPlay(Service.currentPosition)
                 isStop = false
+                isPause = false
                 buttonPause.setImageResource(R.drawable.ic_pause_circle)
             }
         }
         buttonNext.setOnClickListener {
             Service.nextSong()
+            isStop = false
+            isPause = false
+            buttonPause.setImageResource(R.drawable.ic_pause_circle)
             tvSongName.text = Service.listSongs[Service.currentPosition].mTitle
             tvAuthor.text = Service.listSongs[Service.currentPosition].mAuthorName
             sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
         }
         buttonPre.setOnClickListener {
             Service.preSong()
+            isStop = false
+            isPause = false
+            buttonPause.setImageResource(R.drawable.ic_pause_circle)
             tvSongName.text = Service.listSongs[Service.currentPosition].mTitle
             tvAuthor.text = Service.listSongs[Service.currentPosition].mAuthorName
             sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
@@ -77,6 +88,17 @@ class PlayerProcessing : AppCompatActivity() {
         })
         var myTracking = MySongTrack()
         myTracking.start()
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+            else -> {
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
     fun convertMilliseconds(milliseconds: Long): String {
         val minutes = milliseconds / 1000 / 60
