@@ -11,7 +11,7 @@ import com.example.duan.model.album_model
 class adapteralbum(var mlistAlbum: MutableList<album_model>) :
     RecyclerView.Adapter<adapteralbum.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): adapteralbum.ViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.row_item, parent, false)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.itemlist_album, parent, false)
         return ViewHolder(view)
     }
 

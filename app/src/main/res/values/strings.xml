@@ -4,11 +4,12 @@
     <string name="favorite">favorite</string>
     <string name="content_description_favorite">content_description_favorite</string>
     <string name="content_description_search">content_description_search</string>
+    <string name="home">home</string>
     <string name="search">search</string>
     <string name="content_description_more">content_description_more</string>
     <string name="more">more</string>
     <string name="content_description_media">content_description_media"</string>
     <string name="album">Album</string>
-    <string name="createalbum">Create ALbums</string>
-    <string name="song">Song</string>
+    <string name="createAlbum"><u>Tạo mới</u></string>
+    <string name="song">Bài hát</string>
 </resources>

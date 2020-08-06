@@ -11,7 +11,7 @@ import com.example.duan.model.music_model
 class adaptersong(var mlistSong: MutableList<music_model>) :
     RecyclerView.Adapter<adaptersong.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): adaptersong.ViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.column_item, parent, false)
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.item_listmusic, parent, false)
         return ViewHolder(view)
     }
 
@@ -33,7 +33,7 @@ class adaptersong(var mlistSong: MutableList<music_model>) :
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var namesong = itemView.findViewById(R.id.txt_namesong) as TextView
-        var Athornamesong=itemView.findViewById(R.id.txtAthornamesong)as TextView
+        var namesong = itemView.findViewById(R.id.tvSongName) as TextView
+        var Athornamesong=itemView.findViewById(R.id.tvAuthor)as TextView
     }
 }

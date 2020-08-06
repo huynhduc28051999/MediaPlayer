@@ -68,12 +68,12 @@ fun home(topAppBar: MaterialToolbar,context: Context) {
             }
             R.id.search -> {
                 // Handle search icon press
-                val navTop = (context as Activity).findViewById<View>(R.id.nav_top)
+                val linearLayout = (context as Activity).findViewById<View>(R.id.linearAction)
                 val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                if ((navTop as ViewGroup).childCount === 1) {
-                    inflater.inflate(R.layout.textview, navTop as LinearLayout);
+                if ((linearLayout as ViewGroup).childCount === 0) {
+                    inflater.inflate(R.layout.textview, linearLayout as LinearLayout);
                 } else {
-                    (navTop as ViewGroup).removeViewAt(1)
+                    (linearLayout as ViewGroup).removeViewAt(0)
                 }
                 true
             }
