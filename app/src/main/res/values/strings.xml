@@ -14,4 +14,6 @@
     <string name="createAlbum"><u>Tạo mới</u></string>
     <string name="song">Bài hát</string>
     <string name="showMore"><u>Hiển thị thêm</u></string>
+    <string name="songLiked">Bài hát yêu thích</string>
+    <string name="albumLiked">Album yêu thích</string>
 </resources>

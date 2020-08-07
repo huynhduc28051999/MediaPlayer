@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
+import com.example.mediaplayer.model.music_model
 import kotlinx.android.synthetic.main.activity_player_processing.*
 
 
@@ -17,6 +19,7 @@ class PlayerProcessing : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val intent = intent
         val bundle = intent.extras
+        var music: music_model? = null
         if (bundle !== null){
             tvSongName.text = bundle.getString("mTitle")
             tvAuthor.text = bundle.getString("mAuthor")
@@ -24,6 +27,14 @@ class PlayerProcessing : AppCompatActivity() {
             sbProgressPlayer.max = size!!.toInt()
             textviewNumber2.text = convertMilliseconds(size.toLong())
             buttonPause.setImageResource(R.drawable.ic_pause_circle)
+            val db = DatabaseHandlerMusic(this)
+            music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
+            if (music?.isLike == true) {
+                Favorite.setImageResource(R.drawable.ic_favorite_24dp)
+            } else {
+                Favorite.setImageResource(R.drawable.ic_favorite_border)
+            }
+            db.close()
         }
         buttonStop.setOnClickListener {
             if (!isStop) {
@@ -86,6 +97,17 @@ class PlayerProcessing : AppCompatActivity() {
                 Service.seekToProgress(seek.progress)
             }
         })
+        Favorite.setOnClickListener {
+            val db = DatabaseHandlerMusic(this)
+            db.likeOrUnlikeSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
+            music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
+            if (music?.isLike == true) {
+                Favorite.setImageResource(R.drawable.ic_favorite_24dp)
+            } else {
+                Favorite.setImageResource(R.drawable.ic_favorite_border)
+            }
+            db.close()
+        }
         var myTracking = MySongTrack()
         myTracking.start()
     }

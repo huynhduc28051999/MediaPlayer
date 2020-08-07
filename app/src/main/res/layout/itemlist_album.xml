@@ -19,7 +19,8 @@
             android:id="@+id/img_album"
             android:layout_width="match_parent"
             android:layout_height="170dp"
-            android:src="@mipmap/ic_launcher" />
+            android:background="@color/cardview_dark_background"
+            android:src="@drawable/icon_album" />
 
         <TextView
             android:id="@+id/title_album"

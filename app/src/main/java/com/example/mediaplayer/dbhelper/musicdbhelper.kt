@@ -90,7 +90,7 @@ class musicdbhelper(context: Context) :
                         music_name,
                         music_author,
                         music_duration,
-                        music_islike
+                        music_islike > 0
                     )
                 )
                 cursor.moveToNext()

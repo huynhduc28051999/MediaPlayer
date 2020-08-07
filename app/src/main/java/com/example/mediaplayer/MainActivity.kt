@@ -119,8 +119,16 @@ fun home(topAppBar: MaterialToolbar,context: Context) {
         when (menuItem.itemId) {
             R.id.favorite -> {
                 // Handle favorite icon press
-                var intent:Intent = Intent(context, FavoriteActivity::class.java)
-                startActivity(context,intent,intent.extras)
+//                var intent:Intent = Intent(context, FavoriteActivity::class.java)
+//                startActivity(context,intent,intent.extras)
+                val linearLayout = (context as Activity).findViewById<View>(R.id.linearAction)
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                if ((linearLayout as ViewGroup).childCount === 0) {
+                    inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout);
+                } else {
+                    (linearLayout as ViewGroup).removeViewAt(0)
+                    inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout)
+                }
                 true
             }
             R.id.search -> {
@@ -131,6 +139,7 @@ fun home(topAppBar: MaterialToolbar,context: Context) {
                     inflater.inflate(R.layout.textview, linearLayout as LinearLayout);
                 } else {
                     (linearLayout as ViewGroup).removeViewAt(0)
+                    inflater.inflate(R.layout.textview, linearLayout as LinearLayout);
                 }
                 true
             }

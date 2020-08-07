@@ -5,9 +5,9 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
+import com.example.mediaplayer.Service
 import com.example.mediaplayer.SongInfo
-import kotlin.math.log
+import com.example.mediaplayer.model.music_model
 
 
 public class DatabaseHandlerMusic(context: Context?) :
@@ -61,7 +61,7 @@ public class DatabaseHandlerMusic(context: Context?) :
         val cursor: Cursor = dbread.rawQuery(query, null)
         cursor.moveToFirst()
 
-        if (cursor.count === 0) {
+        if (cursor.count == 0) {
             val dbwrite = this.writableDatabase
             val values = ContentValues()
             values.put(KEY_URL, song.mSongURL)
@@ -74,6 +74,66 @@ public class DatabaseHandlerMusic(context: Context?) :
         }
         dbread.close()
     }
+    fun getSongByUrl(url: String): music_model? {
+        val query = String.format(
+            "SELECT * FROM %s WHERE %s = \"%s\"",
+            TABLE_NAME,
+            KEY_URL,
+            url
+        )
+
+        val dbread = this.readableDatabase
+        val cursor: Cursor = dbread.rawQuery(query, null)
+        var music: music_model? = null
+        if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndex(KEY_ID))
+            val url = cursor.getString(cursor.getColumnIndex(KEY_URL))
+            val name = cursor.getString(cursor.getColumnIndex(KEY_NAME))
+            val author = cursor.getString(cursor.getColumnIndex(KEY_AUTHOR))
+            val duration = cursor.getInt(cursor.getColumnIndex(KEY_DURATION))
+            val isLike = cursor.getInt(cursor.getColumnIndex(KEY_IS_LIKE)) > 0
+            music = music_model(id, url, name, author, duration, isLike)
+        }
+
+        dbread.close()
+        return music
+    }
+
+    fun likeOrUnlikeSongByUrl(url: String) {
+        val query = String.format(
+            "SELECT * FROM %s WHERE %s = \"%s\"",
+            TABLE_NAME,
+            KEY_URL,
+            url
+        )
+        val dbread = this.readableDatabase
+        val cursor: Cursor = dbread.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            val dbwrite = this.writableDatabase
+            val values = ContentValues()
+            val id = cursor.getInt(cursor.getColumnIndex(KEY_ID))
+            val isLike = cursor.getInt(cursor.getColumnIndex(KEY_IS_LIKE)) > 0
+            values.put(KEY_IS_LIKE, !isLike)
+            val where = "$KEY_ID=?"
+            val whereArgs =
+                arrayOf(java.lang.String.valueOf(id))
+            dbwrite.update(TABLE_NAME, values, where, whereArgs)
+            dbwrite.close()
+        } else {
+            val dbwrite = this.writableDatabase
+            val values = ContentValues()
+            val song = Service.listSongs[Service.currentPosition]
+            values.put(KEY_URL, song.mSongURL)
+            values.put(KEY_NAME, song.mTitle)
+            values.put(KEY_AUTHOR, song.mAuthorName)
+            values.put(KEY_DURATION, song.mSize)
+            values.put(KEY_IS_LIKE, true)
+            dbwrite.insert(TABLE_NAME, null, values)
+            dbwrite.close()
+        }
+        dbread.close()
+    }
+
     companion object {
         private const val DATABASE_NAME = "MediaPlayer"
         private const val DATABASE_VERSION = 1
