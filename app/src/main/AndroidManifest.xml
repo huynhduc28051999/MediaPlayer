@@ -4,22 +4,27 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
-        android:requestLegacyExternalStorage="true"
+        android:name=".MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".CreateNewAlbum"
+            android:label="Add Album"></activity>
         <activity android:name=".PlayerProcessing" />
         <activity android:name=".detail_album" />
         <activity android:name=".FavoriteActivity" />
         <activity
             android:name=".LoadAllSong"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".MainActivity">
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:label="Album List">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

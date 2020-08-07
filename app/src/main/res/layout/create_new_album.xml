@@ -29,5 +29,15 @@
         android:lines="4"
         android:textColorHint="#C4C0CD"
         android:textSize="20sp" />
+    <Button
+        android:id="@+id/btn_add_newAlbum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thêm"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="#f000"
+        android:layout_gravity="end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp" />
 
 </LinearLayout>

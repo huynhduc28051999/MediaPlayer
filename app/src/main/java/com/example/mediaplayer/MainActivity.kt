@@ -1,7 +1,6 @@
 package com.example.mediaplayer
 
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +10,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
 import com.example.mediaplayer.adapter.adapteralbum
 import com.example.mediaplayer.adapter.adaptersong
@@ -28,9 +29,15 @@ import com.example.mediaplayer.dbhelper.relationdbhelper
 import com.example.mediaplayer.model.album_model
 import com.example.mediaplayer.model.music_model
 import com.google.android.material.appbar.MaterialToolbar
+import io.realm.Realm
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.layout_home.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var addAlbum : Button
+    private lateinit var rvAlbum : RecyclerView
+    private lateinit var albumList : ArrayList<MyAlbum>
+    private lateinit var realm: Realm
     private var mlistAlbum = mutableListOf<album_model>()//Danh sach cac album
     private var mlistSong = mutableListOf<music_model>()//Danh sach nhac co trong he thong
     lateinit var relation:relationdbhelper//lop nay chua cac phuong thuc de tuong tac với bảng relation
@@ -40,6 +47,22 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_home)
+
+        //innit view
+        realm = Realm.getDefaultInstance()
+        addAlbum = findViewById(R.id.btn_createAlbum)
+        rvAlbum = findViewById(R.id.rv_album)
+
+        // on click add album btn
+        addAlbum.setOnClickListener {
+            startActivity(Intent(this, CreateNewAlbum::class.java))
+            finish()
+        }
+
+        rvAlbum.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+        getAllAlbum()
+
+
         checkUserPermission()
         music= musicdbhelper(this)
         album=albumdbhelper(this)
@@ -57,6 +80,14 @@ class MainActivity : AppCompatActivity() {
             var intent:Intent = Intent(this, LoadAllSong::class.java)
             startActivity(this,intent,intent.extras)
         }
+    }
+
+    private fun getAllAlbum() {
+        albumList.clear()
+        albumList = ArrayList()
+        val results:RealmResults<MyAlbum> = realm.where<MyAlbum>(MyAlbum::class.java).findAll()
+        rvAlbum.adapter = AlbumAdapter(this,results)
+        rvAlbum.adapter!!.notifyDataSetChanged()
     }
 
     private val REQUEST_CODE_ASK_PERMISSION = 123
@@ -109,7 +140,9 @@ class MainActivity : AppCompatActivity() {
             db.close()
         }
     }
+
 }
+
 
 fun home(topAppBar: MaterialToolbar,context: Context) {
     topAppBar.setNavigationOnClickListener {
