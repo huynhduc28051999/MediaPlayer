@@ -72,6 +72,14 @@ class PlayerProcessing : AppCompatActivity() {
             tvSongName.text = Service.listSongs[Service.currentPosition].mTitle
             tvAuthor.text = Service.listSongs[Service.currentPosition].mAuthorName
             sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
+            val db = DatabaseHandlerMusic(this)
+            music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
+            if (music?.isLike == true) {
+                Favorite.setImageResource(R.drawable.ic_favorite_24dp)
+            } else {
+                Favorite.setImageResource(R.drawable.ic_favorite_border)
+            }
+            db.close()
         }
         buttonPre.setOnClickListener {
             Service.preSong()
@@ -81,6 +89,14 @@ class PlayerProcessing : AppCompatActivity() {
             tvSongName.text = Service.listSongs[Service.currentPosition].mTitle
             tvAuthor.text = Service.listSongs[Service.currentPosition].mAuthorName
             sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
+            val db = DatabaseHandlerMusic(this)
+            music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
+            if (music?.isLike == true) {
+                Favorite.setImageResource(R.drawable.ic_favorite_24dp)
+            } else {
+                Favorite.setImageResource(R.drawable.ic_favorite_border)
+            }
+            db.close()
         }
         sbProgressPlayer?.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
