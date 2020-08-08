@@ -1,33 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp">
-
-    <TextView android:id="@+id/create_album"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:fontFamily="sans-serif-medium"
-        android:lineSpacingExtra="8sp"
-        android:text="Tạo album mới"
-        android:textColor="#f000"
-        android:textSize="20sp"
-        android:textStyle="normal" />
-
-    <EditText
-        android:id="@+id/name_album"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/album_items"
+    android:layout_width="250dp"
+    android:layout_height="70dp"
+    android:layout_margin="15dp"
+    app:cardElevation="10dp"
+    tools:context=".LoadAllSong">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:gravity="top"
-        android:hint="Nhập tên album"
-        android:inputType="textCapSentences|textMultiLine"
-        android:lines="4"
-        android:textColorHint="#C4C0CD"
-        android:textSize="20sp" />
-
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/editText_album"
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:hint="Nhập tên alnum" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

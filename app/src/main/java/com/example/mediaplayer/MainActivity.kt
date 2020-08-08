@@ -1,7 +1,6 @@
 package com.example.mediaplayer
 
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,6 +15,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
@@ -29,6 +31,7 @@ import com.example.mediaplayer.model.album_model
 import com.example.mediaplayer.model.music_model
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.android.synthetic.main.layout_home.*
+
 
 class MainActivity : AppCompatActivity() {
     private var mlistAlbum = mutableListOf<album_model>()//Danh sach cac album
@@ -57,6 +60,14 @@ class MainActivity : AppCompatActivity() {
             var intent:Intent = Intent(this, LoadAllSong::class.java)
             startActivity(this,intent,intent.extras)
         }
+        btn_createAlbum.setOnClickListener {
+            showNoticeDialog()
+        }
+    }
+    fun showNoticeDialog() {
+        // Create an instance of the dialog fragment and show it
+        val dialog = CreateAlbumDialog()
+        dialog.show(supportFragmentManager, "createAlbum")
     }
 
     private val REQUEST_CODE_ASK_PERMISSION = 123
