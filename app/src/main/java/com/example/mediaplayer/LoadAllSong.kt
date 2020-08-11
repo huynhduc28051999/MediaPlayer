@@ -16,6 +16,9 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mediaplayer.adapter.MyAlbumAdapter
+import com.example.mediaplayer.dbhelper.albumdbhelper
+import com.example.mediaplayer.model.album_model
 import kotlinx.android.synthetic.main.layout_load_all_song.*
 import kotlinx.android.synthetic.main.item_listmusic.view.*
 import java.io.FileDescriptor
@@ -58,6 +61,7 @@ class LoadAllSong : AppCompatActivity() {
             var tvAuthor: TextView = view.tvAuthor
             var play: ImageView = view.buttonPlay
             var image: ImageView = view.imageSong
+            var add: ImageView = view.buttonAdd
         }
 
         override fun onCreateViewHolder(
@@ -102,9 +106,20 @@ class LoadAllSong : AppCompatActivity() {
                     Log.e("Player", ex.toString())
                 }
             }
+            holder.add.setOnClickListener {
+                val album= albumdbhelper(this@LoadAllSong)
+                val mlistAlbum = album.readAllAlbum()
+                showNoticeDialog(mlistAlbum, song)
+                album.close()
+            }
         }
 
         override fun getItemCount() = myDataset.size
+    }
+    fun showNoticeDialog(dataAlbum: MutableList<album_model>, song: SongInfo) {
+        // Create an instance of the dialog fragment and show it
+        val dialog = AddMusicToAlbumDialog(dataAlbum, this, song)
+        dialog.show()
     }
     inner class MySongTrack(): Thread() {
 

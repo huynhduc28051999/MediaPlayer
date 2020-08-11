@@ -16,7 +16,6 @@ import com.example.mediaplayer.dbhelper.musicdbhelper
 import com.example.mediaplayer.dbhelper.relationdbhelper
 import com.example.mediaplayer.model.album_model
 import com.example.mediaplayer.model.music_model
-import com.example.mediaplayer.model.relation_model
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.android.synthetic.main.activity_favorite.*
 

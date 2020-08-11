@@ -7,28 +7,31 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
 import com.example.mediaplayer.model.relation_model
 
 class relationdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         // If you change the database schema, you must increment the database version.
         val DATABASE_VERSION = 1
-        val DATABASE_NAME = "nhac.db"
+        val DATABASE_NAME = "MediaPlayer"
 
         private val SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + RelationContract.RelationEntry.TABLE_NAME + " (" +
-                    RelationContract.RelationEntry.COLUMN_ID_Relation + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    RelationContract.RelationEntry.COLUMN_ID_Music + " INTEGER," +
-                    RelationContract.RelationEntry.COLUMN_ID_Album + " INTEGER)"
+            "CREATE TABLE IF NOT EXISTS " + RelationContract.RelationEntry.TABLE_NAME + " (" +
+                    RelationContract.RelationEntry.COLUMN_ID_Music + " INTEGER, " +
+                    RelationContract.RelationEntry.COLUMN_ID_Album + " INTEGER, " +
+                    "PRIMARY KEY(" +
+                    RelationContract.RelationEntry.COLUMN_ID_Music + "," +
+                    RelationContract.RelationEntry.COLUMN_ID_Album + "))"
 
         private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + RelationContract.RelationEntry.TABLE_NAME
     }
-    override fun onCreate(p0: SQLiteDatabase?) {
-        p0?.execSQL(SQL_CREATE_ENTRIES)
+    override fun onCreate(p0: SQLiteDatabase) {
+        p0.execSQL(SQL_CREATE_ENTRIES)
     }
 
-    override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
-        p0?.execSQL(SQL_DELETE_ENTRIES)
+    override fun onUpgrade(p0: SQLiteDatabase, p1: Int, p2: Int) {
+        p0.execSQL(SQL_DELETE_ENTRIES)
         onCreate(p0)
     }
     fun insertRelation(relation:relation_model){
@@ -53,19 +56,54 @@ class relationdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
             return mutableListOf()
         }
 
-        var relation_id: Int
         var relation_music:Int
         var relation_album:Int
         if (cursor!!.moveToFirst()) {
             while (cursor.isAfterLast == false) {
-             relation_id = cursor.getInt(cursor.getColumnIndex(RelationContract.RelationEntry.COLUMN_ID_Relation))
                 relation_music= cursor.getInt(cursor.getColumnIndex(RelationContract.RelationEntry.COLUMN_ID_Music))
                 relation_album = cursor.getInt(cursor.getColumnIndex(RelationContract.RelationEntry.COLUMN_ID_Album))
 
-                relation_model.add(relation_model(relation_id, relation_music,relation_album))
+                relation_model.add(relation_model(relation_music,relation_album))
                 cursor.moveToNext()
             }
         }
         return relation_model
+    }
+    fun addRelation(idAlbum: Int, urlMusic: String) {
+        val db = writableDatabase
+        db.execSQL(SQL_CREATE_ENTRIES)
+        var cursor: Cursor? = null
+        val query = String.format(
+            "SELECT * FROM %s WHERE %s = \"%s\"",
+            MusicContract.MusicEntry.TABLE_NAME,
+            MusicContract.MusicEntry.COLUMN_URL_MUSIC,
+            urlMusic
+        )
+        try {
+            cursor = db.rawQuery(query, null)
+            var idMusic: Int
+            if (cursor!!.moveToFirst()) {
+                idMusic = cursor.getInt(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_ID_MUSIC))
+                val queryRelation = String.format(
+                    "SELECT * FROM %s WHERE %s = \"%s\" AND %s = \"%s\"",
+                    RelationContract.RelationEntry.TABLE_NAME,
+                    RelationContract.RelationEntry.COLUMN_ID_Album,
+                    idAlbum,
+                    RelationContract.RelationEntry.COLUMN_ID_Music,
+                    idMusic
+                )
+                val exists = db.rawQuery(queryRelation, null)
+                cursor.moveToFirst()
+                if (exists.count <= 0) {
+                    val values = ContentValues()
+                    values.put(RelationContract.RelationEntry.COLUMN_ID_Album, idAlbum)
+                    values.put(RelationContract.RelationEntry.COLUMN_ID_Music, idMusic)
+                    db.insert(RelationContract.RelationEntry.TABLE_NAME, null, values)
+                }
+            }
+        } catch (e: SQLiteException) {
+            db.execSQL(SQL_CREATE_ENTRIES)
+        }
+        db.close()
     }
 }

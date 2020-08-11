@@ -8,7 +8,6 @@ object RelationContract {
     class RelationEntry : BaseColumns {
         companion object {
             val TABLE_NAME="relation"
-            val COLUMN_ID_Relation="idRelation"
             val COLUMN_ID_Music = "idMusic"
             val COLUMN_ID_Album = "idAlbum"
         }

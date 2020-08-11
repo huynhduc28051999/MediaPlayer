@@ -33,13 +33,13 @@ class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         onCreate(p0)
     }
 
-    fun insertAlbum(album: album_model) {
+    fun insertAlbum(name: String, isLike: Boolean) {
         // Gets the data repository in write mode
         val db = this.writableDatabase
         // Create a new map of values, where column names are the keys
         val values = ContentValues()
-        values.put(AlbumContract.AlbumEntry.COLUMN_NAME_ALBUM, album.name)
-        values.put(AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM, album.isLike)
+        values.put(AlbumContract.AlbumEntry.COLUMN_NAME_ALBUM, name)
+        values.put(AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM, isLike)
 
         // Insert the new row, returning the primary key value of the new row
         val newRowId = db.insert(AlbumContract.AlbumEntry.TABLE_NAME, null, values)
@@ -68,7 +68,7 @@ class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
                 album_islike =
                     cursor.getInt(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM))
 
-                album_model.add(album_model(album_id, album_name, album_islike))
+                album_model.add(album_model(album_id, album_name, album_islike > 0))
                 cursor.moveToNext()
             }
         }

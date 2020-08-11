@@ -1,5 +1,6 @@
 package com.example.mediaplayer.adapter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,9 +12,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mediaplayer.PlayerProcessing
-import com.example.mediaplayer.R
-import com.example.mediaplayer.Service
+import com.example.mediaplayer.*
+import com.example.mediaplayer.dbhelper.albumdbhelper
+import com.example.mediaplayer.model.album_model
 import com.example.mediaplayer.model.music_model
 
 
@@ -58,11 +59,28 @@ class adaptersong(var mlistSong: MutableList<music_model>, val context: Context)
                 Log.e("Player", ex.toString())
             }
         }
+        holder.add.setOnClickListener {
+            val album= albumdbhelper(context)
+            val mlistAlbum = album.readAllAlbum()
+            var song = SongInfo(msong.name, msong.author, msong.url, 2, 1 )
+            showNoticeDialog(mlistAlbum, song)
+            album.close()
+        }
     }
 
+//    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+//        super.onAttachedToRecyclerView(recyclerView)
+//        this.context = recyclerView.context
+//    }
+    fun showNoticeDialog(dataAlbum: MutableList<album_model>, song: SongInfo) {
+        // Create an instance of the dialog fragment and show it
+        val dialog = AddMusicToAlbumDialog(dataAlbum, context as Activity, song)
+        dialog.show()
+    }
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var namesong = itemView.findViewById(R.id.tvSongName) as TextView
         var Athornamesong=itemView.findViewById(R.id.tvAuthor)as TextView
         var play: ImageView = itemView.findViewById(R.id.buttonPlay)
+        var add: ImageView = itemView.findViewById(R.id.buttonAdd)
     }
 }

@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.sqlite.SQLiteDatabase
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +17,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.startActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
@@ -33,7 +32,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.android.synthetic.main.layout_home.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CreateAlbumDialog.DialogListener {
     private var mlistAlbum = mutableListOf<album_model>()//Danh sach cac album
     private var mlistSong = mutableListOf<music_model>()//Danh sach nhac co trong he thong
     lateinit var relation:relationdbhelper//lop nay chua cac phuong thuc de tuong tac với bảng relation
@@ -43,19 +42,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_home)
-        checkUserPermission()
         music= musicdbhelper(this)
         album=albumdbhelper(this)
-//        album.insertAlbum(album_model(8,"Album1",0))
-//        album.insertAlbum(album_model(8,"Album1",0))
-//        album.insertAlbum(album_model(8,"Album1",0))
-//        album.insertAlbum(album_model(8,"Album1",0))
+        checkUserPermission()
         mlistAlbum=album.readAllAlbum()//Danh sach cac album co trong database
         home(topAppBar,this)
         album(mlistAlbum,rv_album,this)
 
-        mlistSong=music.readAllMusic()//Danh sach bai nhac co trong database
-        song(mlistSong,rv_song,this)
         btn_allSong.setOnClickListener {
             var intent:Intent = Intent(this, LoadAllSong::class.java)
             startActivity(this,intent,intent.extras)
@@ -119,6 +112,16 @@ class MainActivity : AppCompatActivity() {
             Service.setSongList(list)
             db.close()
         }
+        mlistSong=music.readAllMusic()//Danh sach bai nhac co trong database
+        song(mlistSong,rv_song,this)
+    }
+
+    override fun applyText(text: String) {
+        val db = albumdbhelper(this)
+        db.insertAlbum(text, false)
+        mlistAlbum=album.readAllAlbum()//Danh sach cac album co trong database
+        album(mlistAlbum,rv_album,this)
+        db.close()
     }
 }
 
