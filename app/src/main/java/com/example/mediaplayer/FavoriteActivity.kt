@@ -2,15 +2,12 @@ package com.example.mediaplayer
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.google.gson.Gson
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mediaplayer.adapter.AdapterFavourite
 import com.example.mediaplayer.adapter.adapteralbum
 import com.example.mediaplayer.adapter.adaptersong
 import com.example.mediaplayer.adapter.spacealbum
@@ -21,9 +18,6 @@ import com.example.mediaplayer.model.album_model
 import com.example.mediaplayer.model.music_model
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.android.synthetic.main.activity_favorite.*
-import java.lang.reflect.Type
-import com.google.gson.reflect.TypeToken
-
 
 class FavoriteActivity : AppCompatActivity() {
     private var mlistAlbum = mutableListOf<album_model>()//Danh sach cac album
@@ -31,22 +25,17 @@ class FavoriteActivity : AppCompatActivity() {
     lateinit var relation:relationdbhelper//lop nay chua cac phuong thuc de tuong tac với bảng relation
     lateinit var album: albumdbhelper//lớp này chứa các phương thức để tương tác với bảng album
     lateinit var music: musicdbhelper
-    var listLike = ArrayList<music_model>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorite)
-        music = musicdbhelper(this)
-        mlistSong = music.readAllMusic()//Danh sach bai nhac co trong database
-        countMusic.text = mlistSong.size.toString()
-        btnGoBack.setOnClickListener {
-            finish()
-        }
-        val sharedPref: SharedPreferences = getSharedPreferences("list", 0)
-        if (sharedPref.contains("list")) {
-            listLike = getArrayList("list")
-            countLike.text = listLike.size.toString()
-            setupAdapter(listLike)
-        }
+        home(topAppBar,this)
+        album=albumdbhelper(this)
+        mlistAlbum=album.readAllAlbum()//Danh sach cac album co trong database
+        album(mlistAlbum,rv_album,this)
+
+        music= musicdbhelper(this)
+        mlistSong=music.readAllMusic()//Danh sach bai nhac co trong database
+        song(mlistSong,rv_song,this)
     }
     fun home(topAppBar: MaterialToolbar, context: Context) {
         topAppBar.setNavigationOnClickListener {
@@ -88,23 +77,5 @@ class FavoriteActivity : AppCompatActivity() {
         val adapter = adaptersong(mlistSong, context)
         rv_song.adapter = adapter
         rv_song.addItemDecoration(spacealbum(1,2))
-    }
-
-    fun getArrayList(key: String?): ArrayList<music_model> {
-        val sharedPref: SharedPreferences = getSharedPreferences("list", 0)
-        val gson = Gson()
-        val json: String? = sharedPref.getString(key, null)
-        val type: Type = object : TypeToken<ArrayList<music_model>>() {}.getType()
-        return gson.fromJson(json, type)
-    }
-
-    private fun setupAdapter(arr: ArrayList<music_model>) {
-        val layoutManager1 = LinearLayoutManager(this)
-        layoutManager1.orientation = LinearLayoutManager.VERTICAL
-        rv_like.layoutManager = layoutManager1
-        val adapter1 = AdapterFavourite(this, arr)
-        adapter1.notifyDataSetChanged()
-
-        rv_like.adapter = adapter1
     }
 }

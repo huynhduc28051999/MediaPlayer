@@ -1,25 +1,15 @@
 package com.example.mediaplayer
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
 import com.example.mediaplayer.model.music_model
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_player_processing.*
-import java.lang.reflect.Type
 
 
 class PlayerProcessing : AppCompatActivity() {
-    var title = ""
-    var author = ""
-    var size = ""
-    var url = ""
-    var listLike = ArrayList<music_model>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         var isPause: Boolean = false
         var isStop: Boolean = false
@@ -30,23 +20,16 @@ class PlayerProcessing : AppCompatActivity() {
         val intent = intent
         val bundle = intent.extras
         var music: music_model? = null
-        val sharedPref: SharedPreferences = getSharedPreferences("list", 0)
-        if(sharedPref.contains("list")){
-            listLike = getArrayList("list")
-        }
         if (bundle !== null){
-            title = bundle.getString("mTitle").toString()
-            author = bundle.getString("mAuthorName").toString()
-            size = bundle.getString("mSize").toString()
-            url = bundle.getString("mSongURL").toString()
-            tvSongName.text = title
-            tvAuthor.text = author
+            tvSongName.text = bundle.getString("mTitle")
+            tvAuthor.text = bundle.getString("mAuthor")
+            val size = bundle.getString("mSize")
             sbProgressPlayer.max = size!!.toInt()
             textviewNumber2.text = convertMilliseconds(size.toLong())
             buttonPause.setImageResource(R.drawable.ic_pause_circle)
             val db = DatabaseHandlerMusic(this)
             music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
-            if (checkMusic(title)) {
+            if (music?.isLike == true) {
                 Favorite.setImageResource(R.drawable.ic_favorite_24dp)
             } else {
                 Favorite.setImageResource(R.drawable.ic_favorite_border)
@@ -91,7 +74,7 @@ class PlayerProcessing : AppCompatActivity() {
             sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
             val db = DatabaseHandlerMusic(this)
             music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
-            if (checkMusic(Service.listSongs[Service.currentPosition].mTitle.toString())) {
+            if (music?.isLike == true) {
                 Favorite.setImageResource(R.drawable.ic_favorite_24dp)
             } else {
                 Favorite.setImageResource(R.drawable.ic_favorite_border)
@@ -131,41 +114,19 @@ class PlayerProcessing : AppCompatActivity() {
             }
         })
         Favorite.setOnClickListener {
-            if (checkMusic(title)) {
-                Favorite.setImageResource(R.drawable.ic_favorite_border)
-                listLike = removeMusicFavourite(title)
-                saveArrayList(listLike,"list")
-            } else {
+            val db = DatabaseHandlerMusic(this)
+            db.likeOrUnlikeSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
+            music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
+            if (music?.isLike == true) {
                 Favorite.setImageResource(R.drawable.ic_favorite_24dp)
-                listLike.add(music_model(1,url,title,author,size.toInt(),true))
-                saveArrayList(listLike,"list")
+            } else {
+                Favorite.setImageResource(R.drawable.ic_favorite_border)
             }
+            db.close()
         }
         var myTracking = MySongTrack()
         myTracking.start()
     }
-
-    fun checkMusic(name:String) : Boolean {
-        listLike.forEach {
-            if (it.name == name) {
-                return true
-            }
-        }
-        return false
-    }
-    fun removeMusicFavourite(name:String) : ArrayList<music_model> {
-        var temp = listLike
-        temp = ArrayList(temp.filter { s -> s.name != name })
-        return temp
-    }
-    fun getArrayList(key: String?): ArrayList<music_model> {
-        val sharedPref: SharedPreferences = getSharedPreferences("list", 0)
-        val gson = Gson()
-        val json: String? = sharedPref.getString(key, null)
-        val type: Type = object : TypeToken<ArrayList<music_model>>() {}.getType()
-        return gson.fromJson(json, type)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
             android.R.id.home -> {
@@ -177,16 +138,6 @@ class PlayerProcessing : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-    fun saveArrayList(list: ArrayList<music_model>, key: String?) {
-        val sharedPref: SharedPreferences = getSharedPreferences("list", 0)
-        val editor: SharedPreferences.Editor = sharedPref.edit()
-        val gson = Gson()
-        val json: String = gson.toJson(list)
-        editor.putString(key, json)
-        editor.apply()
-    }
-
     fun convertMilliseconds(milliseconds: Long): String {
         val minutes = milliseconds / 1000 / 60
         val seconds = milliseconds / 1000 % 60
