@@ -150,9 +150,37 @@ fun home(topAppBar: MaterialToolbar, context: Context) {
     topAppBar.setOnMenuItemClickListener { menuItem ->
         when (menuItem.itemId) {
             R.id.favorite -> {
-                // Handle favorite icon press
-                val intent = Intent(context, FavoriteActivity::class.java)
-                startActivity(context, intent, intent.extras)
+                val linearLayout = (context as Activity).findViewById<View>(R.id.linearAction)
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                if ((linearLayout as ViewGroup).childCount === 0) {
+                    var view:View=inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout);
+                    var btn_album=view.findViewById(R.id.btn_album) as LinearLayout
+                    btn_album.setOnClickListener {
+                        var intent:Intent = Intent(context, AlbumLike::class.java)
+                        startActivity(context,intent,intent.extras)
+                    }
+                    val btn_song_liked=view.findViewById(R.id.btn_song_liked) as LinearLayout
+                    btn_song_liked.setOnClickListener {
+                        // Handle favorite icon press
+                        val intent = Intent(context, FavoriteActivity::class.java)
+                        startActivity(context, intent, intent.extras)
+                    }
+                } else {
+                    (linearLayout as ViewGroup).removeViewAt(0)
+                    var view:View=inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout);
+                    var btn_album=view.findViewById(R.id.btn_album) as LinearLayout
+                    btn_album.setOnClickListener {
+                        var intent:Intent = Intent(context, AlbumLike::class.java)
+                        startActivity(context,intent,intent.extras)
+                    }
+                    val btn_song_liked=view.findViewById(R.id.btn_song_liked) as LinearLayout
+                    btn_song_liked.setOnClickListener {
+                        // Handle favorite icon press
+                        val intent = Intent(context, FavoriteActivity::class.java)
+                        startActivity(context, intent, intent.extras)
+                    }
+                }
+                true
                 true
             }
             R.id.search -> {
