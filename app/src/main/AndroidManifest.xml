@@ -16,7 +16,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".detail_album_like"></activity>
         <activity android:name=".AlbumLike" />
-        <activity android:name=".createAlbumDialog" />
         <activity android:name=".PlayerProcessing" />
         <activity android:name=".detail_album" />
         <activity android:name=".FavoriteActivity" />
