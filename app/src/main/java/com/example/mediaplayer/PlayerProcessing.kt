@@ -22,7 +22,7 @@ class PlayerProcessing : AppCompatActivity() {
         var music: music_model? = null
         if (bundle !== null){
             tvSongName.text = bundle.getString("mTitle")
-            tvAuthor.text = bundle.getString("mAuthor")
+            tvAuthor.text = bundle.getString("mAuthorName")
             val size = bundle.getString("mSize")
             sbProgressPlayer.max = size!!.toInt()
             textviewNumber2.text = convertMilliseconds(size.toLong())
@@ -58,7 +58,7 @@ class PlayerProcessing : AppCompatActivity() {
                     buttonPause.setImageResource(R.drawable.ic_pause_circle)
                 }
             } else {
-                Service.startPlay(Service.currentPosition)
+                Service.startPlay(Service.listSongs[Service.currentPosition].mTitle!!)
                 isStop = false
                 isPause = false
                 buttonPause.setImageResource(R.drawable.ic_pause_circle)

@@ -92,7 +92,7 @@ class LoadAllSong : AppCompatActivity() {
             }
             holder.play.setOnClickListener {
                 try {
-                    Service.startPlay(position)
+                    Service.startPlay(song.mTitle!!)
                     sbProgress.max = Service.mp.duration
                     var intent = Intent(this@LoadAllSong, PlayerProcessing::class.java)
                     val bundle = Bundle()

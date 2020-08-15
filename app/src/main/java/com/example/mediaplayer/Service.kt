@@ -2,7 +2,7 @@ package com.example.mediaplayer
 
 import android.media.MediaPlayer
 
-public class Service {
+class Service {
     companion object {
         var mp: MediaPlayer = MediaPlayer()
         var progress: Int = 0
@@ -31,17 +31,26 @@ public class Service {
                 mp.start()
             }
         }
-        fun startPlay(currentPosition: Int) {
-            if (this.currentPosition != currentPosition) {
+        fun startPlay(songName: String) {
+            var position: Int = 0
+            this.listSongs.forEachIndexed{index, song ->
+                run {
+                    if (song.mTitle.equals(songName)) {
+                        position = index
+                    }
+                }
+            }
+            if (this.currentPosition != position) {
                 stopPlay()
-                this.currentPosition = currentPosition
-                mp.setDataSource(this.listSongs[currentPosition].mSongURL)
+                this.currentPosition = position
+                mp.setDataSource(this.listSongs[position].mSongURL)
                 mp.prepare()
                 mp.start()
                 this.isStop = false
             } else {
+                this.currentPosition = position
                 if (isStop) {
-                    mp.setDataSource(this.listSongs[currentPosition].mSongURL)
+                    mp.setDataSource(this.listSongs[position].mSongURL)
                     mp.prepare()
                     mp.start()
                     this.isStop = false

@@ -17,7 +17,6 @@
         <activity android:name=".detail_album_like"></activity>
         <activity android:name=".AlbumLike" />
         <activity android:name=".PlayerProcessing" />
-        <activity android:name=".detail_album" />
         <activity android:name=".FavoriteActivity" />
         <activity
             android:name=".LoadAllSong"
