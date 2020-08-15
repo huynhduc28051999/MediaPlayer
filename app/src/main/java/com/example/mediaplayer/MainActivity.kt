@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,14 +28,18 @@ import com.example.mediaplayer.dbhelper.albumdbhelper
 import com.example.mediaplayer.dbhelper.musicdbhelper
 import com.example.mediaplayer.dbhelper.relationdbhelper
 import com.example.mediaplayer.model.album_model
+import com.example.mediaplayer.model.album_model_like
 import com.example.mediaplayer.model.music_model
 import com.google.android.material.appbar.MaterialToolbar
+import kotlinx.android.synthetic.main.area_liked.*
 import kotlinx.android.synthetic.main.layout_home.*
+import kotlinx.android.synthetic.main.textview.*
 
 
 class MainActivity : AppCompatActivity(), CreateAlbumDialog.DialogListener {
     private var mlistAlbum = mutableListOf<album_model>()//Danh sach cac album
     private var mlistSong = mutableListOf<music_model>()//Danh sach nhac co trong he thong
+    private var mlistAlbumLike = mutableListOf<album_model_like>()
     lateinit var relation:relationdbhelper//lop nay chua cac phuong thuc de tuong tac với bảng relation
     lateinit var album:albumdbhelper//lớp này chứa các phương thức để tương tác với bảng album
     lateinit var music:musicdbhelper//lop nay chua cac phuong thuc de tuong tac voi bang music
@@ -138,10 +143,20 @@ fun home(topAppBar: MaterialToolbar,context: Context) {
                 val linearLayout = (context as Activity).findViewById<View>(R.id.linearAction)
                 val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 if ((linearLayout as ViewGroup).childCount === 0) {
-                    inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout);
+                    var view:View=inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout);
+                    var btn_album=view.findViewById(R.id.btn_album) as LinearLayout
+                    btn_album.setOnClickListener {
+                        var intent:Intent = Intent(context, AlbumLike::class.java)
+                        startActivity(context,intent,intent.extras)
+                    }
                 } else {
                     (linearLayout as ViewGroup).removeViewAt(0)
-                    inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout)
+                    var view:View=inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout);
+                    var btn_album=view.findViewById(R.id.btn_album) as LinearLayout
+                    btn_album.setOnClickListener {
+                        var intent:Intent = Intent(context, AlbumLike::class.java)
+                        startActivity(context,intent,intent.extras)
+                    }
                 }
                 true
             }
@@ -158,7 +173,14 @@ fun home(topAppBar: MaterialToolbar,context: Context) {
                 true
             }
             R.id.more -> {
-                // Handle more item (inside overflow menu) press
+                //var intent:Intent = Intent(context, AlbumLike::class.java)
+                //startActivity(context,intent,intent.extras)
+                //var bundle:Bundle=Bundle()
+                //for ((index,value) in mlistAlbumLike.withIndex()) {
+                   // bundle.putSerializable("album"+index,value)
+                //}
+                //intent.putExtras(bundle)
+                //startActivity(context,intent,intent.extras)
                 true
             }
             else -> false
@@ -171,14 +193,13 @@ fun album(mlistAlbum:MutableList<album_model>,rv_album:RecyclerView,context: Con
     var layoutManager: LinearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     rv_album.layoutManager = layoutManager
     //rv_album.itemAnimator=DefaultItemAnimator
-    val adapter = adapteralbum(mlistAlbum)
+    val adapter = adapteralbum(mlistAlbum,context)
     rv_album.adapter = adapter
     rv_album.addItemDecoration(spacealbum(1,2))}
-fun song(mlistSong: MutableList<music_model>, rv_song:RecyclerView, context: Context)
-{
+fun song(mlistSong: MutableList<music_model>, rv_song:RecyclerView, context: Context) {
     var layoutManager: LinearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     rv_song.layoutManager = layoutManager
     val adapter = adaptersong(mlistSong, context)
     rv_song.adapter = adapter
-    rv_song.addItemDecoration(spacealbum(1,2))
+    rv_song.addItemDecoration(spacealbum(1, 2))
 }

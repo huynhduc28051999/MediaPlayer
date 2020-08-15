@@ -67,7 +67,7 @@ class FavoriteActivity : AppCompatActivity() {
         var layoutManager: LinearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         rv_album.layoutManager = layoutManager
         //rv_album.itemAnimator=DefaultItemAnimator
-        val adapter = adapteralbum(mlistAlbum)
+        val adapter = adapteralbum(mlistAlbum,context)
         rv_album.adapter = adapter
         rv_album.addItemDecoration(spacealbum(1,2))}
     fun song(mlistSong: MutableList<music_model>, rv_song: RecyclerView, context: Context)

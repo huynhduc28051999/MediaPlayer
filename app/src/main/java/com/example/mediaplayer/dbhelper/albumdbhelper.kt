@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.mediaplayer.model.album_model
+import com.example.mediaplayer.model.album_model_like
 
 class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
@@ -51,6 +52,35 @@ class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         var cursor: Cursor? = null
         try {
             cursor = db.rawQuery("select * from " + AlbumContract.AlbumEntry.TABLE_NAME, null)
+        } catch (e: SQLiteException) {
+            db.execSQL(SQL_CREATE_ENTRIES)
+            return mutableListOf()
+        }
+
+        var album_id: Int
+        var album_name: String
+        var album_islike: Int
+        if (cursor!!.moveToFirst()) {
+            while (cursor.isAfterLast == false) {
+                album_id =
+                    cursor.getInt(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_ID_ALBUM))
+                album_name =
+                    cursor.getString(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_NAME_ALBUM))
+                album_islike =
+                    cursor.getInt(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM))
+
+                album_model.add(album_model(album_id, album_name, album_islike > 0))
+                cursor.moveToNext()
+            }
+        }
+        return album_model
+    }
+    fun readAllAlbumLike(): MutableList<album_model> {
+        val album_model = mutableListOf<album_model>()
+        val db = writableDatabase
+        var cursor: Cursor? = null
+        try {
+            cursor = db.rawQuery("select * from " + AlbumContract.AlbumEntry.TABLE_NAME+" where "+AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM+"=0", null)
         } catch (e: SQLiteException) {
             db.execSQL(SQL_CREATE_ENTRIES)
             return mutableListOf()
