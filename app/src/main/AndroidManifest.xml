@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".createAlbumDialog"></activity>
+        <activity android:name=".detail_album_like"></activity>
+        <activity android:name=".AlbumLike" />
+        <activity android:name=".createAlbumDialog" />
         <activity android:name=".PlayerProcessing" />
         <activity android:name=".detail_album" />
         <activity android:name=".FavoriteActivity" />
