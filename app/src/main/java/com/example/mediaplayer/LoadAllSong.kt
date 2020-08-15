@@ -16,6 +16,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mediaplayer.adapter.MyAlbumAdapter
 import com.example.mediaplayer.dbhelper.albumdbhelper
 import com.example.mediaplayer.model.album_model
 import kotlinx.android.synthetic.main.layout_load_all_song.*
@@ -86,12 +87,12 @@ class LoadAllSong : AppCompatActivity() {
             if (maxAuthorName > 20) maxAuthorName = 20
             holder.tvSongName.text = song.mTitle?.substring(0, maxTitle)
             holder.tvAuthor.text =song.mAuthorName?.substring(0, maxAuthorName)
-            if (getAlbumArt(song.mInageId) != null ){
-                holder.image.setImageBitmap(getAlbumArt(song.mInageId))
+            if (getAlbumart(song.mInageId) != null ){
+                holder.image.setImageBitmap(getAlbumart(song.mInageId))
             }
             holder.play.setOnClickListener {
                 try {
-                    Service.startPlay(position)
+                    Service.startPlay(song.mTitle!!)
                     sbProgress.max = Service.mp.duration
                     var intent = Intent(this@LoadAllSong, PlayerProcessing::class.java)
                     val bundle = Bundle()
@@ -145,7 +146,7 @@ class LoadAllSong : AppCompatActivity() {
             }
         }
     }
-    fun getAlbumArt(album_id: Long?): Bitmap? {
+    fun getAlbumart(album_id: Long?): Bitmap? {
         var bm: Bitmap? = null
         try {
             val sArtworkUri: Uri = Uri
