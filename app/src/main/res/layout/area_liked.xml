@@ -11,6 +11,7 @@
         tools:ignore="MissingConstraints">
 
         <LinearLayout
+            android:id="@+id/btn_song_liked"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
