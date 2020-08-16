@@ -14,7 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".createAlbumDialog"></activity>
+        <activity
+            android:name=".SongLike"
+            android:label="@string/title_activity_song_like"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".model.SearchMainActivity" />
+        <activity android:name=".createAlbumDialog" />
         <activity android:name=".PlayerProcessing" />
         <activity android:name=".detail_album" />
         <activity android:name=".FavoriteActivity" />
