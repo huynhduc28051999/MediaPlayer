@@ -14,12 +14,10 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
 import com.example.mediaplayer.adapter.adapteralbum
 import com.example.mediaplayer.adapter.adaptersong
 import com.example.mediaplayer.adapter.spacealbum
@@ -30,9 +28,7 @@ import com.example.mediaplayer.model.album_model
 import com.example.mediaplayer.model.album_model_like
 import com.example.mediaplayer.model.music_model
 import com.google.android.material.appbar.MaterialToolbar
-import kotlinx.android.synthetic.main.area_liked.*
 import kotlinx.android.synthetic.main.layout_home.*
-import kotlinx.android.synthetic.main.textview.*
 
 
 class MainActivity : AppCompatActivity(), CreateAlbumDialog.DialogListener {
@@ -107,7 +103,7 @@ class MainActivity : AppCompatActivity(), CreateAlbumDialog.DialogListener {
         val selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0"
         val cursor = contentResolver.query(allSongURI, null, selection, null, null)
         val list = ArrayList<SongInfo>()
-        val db = DatabaseHandlerMusic(this)
+        val db = musicdbhelper(this)
         if (cursor !== null) {
             if (cursor.moveToFirst()) {
                 do {
@@ -202,7 +198,6 @@ fun home(topAppBar: MaterialToolbar, context: Context) {
                     }
                 } else {
                     (linearLayout as ViewGroup).removeViewAt(0)
-                    inflater.inflate(R.layout.textview, linearLayout as LinearLayout);
                     val view: View =
                         inflater.inflate(R.layout.textview, linearLayout as LinearLayout);
                     val search = view.findViewById<View>(R.id.search)

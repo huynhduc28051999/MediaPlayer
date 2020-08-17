@@ -36,18 +36,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="5">
+        android:background="#88848CCF"
+        android:layout_weight="5.5">
         <TextView
-            android:id="@+id/title_album"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="ALbum yêu thich"
-            android:layout_weight="20"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            />
+            android:text="Album yêu thích"
+            android:textColor="#000"
+            android:textSize="25sp"
+            android:textStyle="bold" />
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_album_favorite"

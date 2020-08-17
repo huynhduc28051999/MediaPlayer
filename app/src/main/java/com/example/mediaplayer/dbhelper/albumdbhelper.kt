@@ -6,10 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
-import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
 import com.example.mediaplayer.model.album_model
-import com.example.mediaplayer.model.album_model_like
-import com.example.mediaplayer.model.music_model
 
 class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
@@ -111,7 +108,7 @@ class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         db.execSQL(SQL_CREATE_ENTRIES)
         var cursor: Cursor? = null
         val query = String.format(
-            "SELECT * FROM %s WHERE %s = %s",
+            "SELECT * FROM %s WHERE %s = \"%s\"",
             AlbumContract.AlbumEntry.TABLE_NAME,
             AlbumContract.AlbumEntry.COLUMN_ID_ALBUM,
             idAlbum

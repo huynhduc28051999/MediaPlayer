@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
+import com.example.mediaplayer.dbhelper.musicdbhelper
 import com.example.mediaplayer.model.music_model
 import kotlinx.android.synthetic.main.activity_player_processing.*
 
@@ -27,7 +27,7 @@ class PlayerProcessing : AppCompatActivity() {
             sbProgressPlayer.max = size!!.toInt()
             textviewNumber2.text = convertMilliseconds(size.toLong())
             buttonPause.setImageResource(R.drawable.ic_pause_circle)
-            val db = DatabaseHandlerMusic(this)
+            val db = musicdbhelper(this)
             music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
             if (music?.isLike == true) {
                 Favorite.setImageResource(R.drawable.ic_favorite_24dp)
@@ -72,7 +72,7 @@ class PlayerProcessing : AppCompatActivity() {
             tvSongName.text = Service.listSongs[Service.currentPosition].mTitle
             tvAuthor.text = Service.listSongs[Service.currentPosition].mAuthorName
             sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
-            val db = DatabaseHandlerMusic(this)
+            val db = musicdbhelper(this)
             music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
             if (music?.isLike == true) {
                 Favorite.setImageResource(R.drawable.ic_favorite_24dp)
@@ -89,7 +89,7 @@ class PlayerProcessing : AppCompatActivity() {
             tvSongName.text = Service.listSongs[Service.currentPosition].mTitle
             tvAuthor.text = Service.listSongs[Service.currentPosition].mAuthorName
             sbProgressPlayer.max = Service.listSongs[Service.currentPosition].mSize
-            val db = DatabaseHandlerMusic(this)
+            val db = musicdbhelper(this)
             music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
             if (music?.isLike == true) {
                 Favorite.setImageResource(R.drawable.ic_favorite_24dp)
@@ -114,7 +114,7 @@ class PlayerProcessing : AppCompatActivity() {
             }
         })
         Favorite.setOnClickListener {
-            val db = DatabaseHandlerMusic(this)
+            val db = musicdbhelper(this)
             db.likeOrUnlikeSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
             music = db.getSongByUrl(Service.listSongs[Service.currentPosition].mSongURL!!)
             if (music?.isLike == true) {

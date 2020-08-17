@@ -2,6 +2,7 @@ package com.example.mediaplayer.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,7 @@ class adapteralbum(var mlistAlbum: MutableList<album_model>,var context: Context
         holder.namealbum.text = malbum.name
         holder.btn_chitiet.setOnClickListener {
             var intent: Intent = Intent(context, Detail_album::class.java)
-            intent.putExtra("idAlbum",position)
+            intent.putExtra("idAlbum", malbum.id)
             intent.putExtra("tenalbum",mlistAlbum[position].name)
             ContextCompat.startActivity(context, intent, intent.extras)
         }

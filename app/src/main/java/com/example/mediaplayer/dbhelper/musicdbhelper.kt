@@ -7,7 +7,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.mediaplayer.Service
+import com.example.mediaplayer.SongInfo
 import com.example.mediaplayer.model.music_model
+import java.lang.Exception
 
 class musicdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
@@ -15,7 +18,7 @@ class musicdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         val DATABASE_VERSION = 1
         val DATABASE_NAME = "MediaPlayer"
         private val SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + MusicContract.MusicEntry.TABLE_NAME + " (" +
+            "CREATE TABLE IF NOT EXISTS " + MusicContract.MusicEntry.TABLE_NAME + " (" +
                     MusicContract.MusicEntry.COLUMN_ID_MUSIC + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     MusicContract.MusicEntry.COLUMN_URL_MUSIC + " TEXT," +
                     MusicContract.MusicEntry.COLUMN_NAME_MUSIC + " TEXT," +
@@ -111,7 +114,7 @@ class musicdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
                         + MusicContract.MusicEntry.COLUMN_ISLIKE_MUSIC + " from ("+MusicContract.MusicEntry.TABLE_NAME
                         +" INNER JOIN "+RelationContract.RelationEntry.TABLE_NAME
                         + " ON "+MusicContract.MusicEntry.TABLE_NAME+"."+MusicContract.MusicEntry.COLUMN_ID_MUSIC+"="
-                        +RelationContract.RelationEntry.TABLE_NAME+"."+RelationContract.RelationEntry.COLUMN_ID_Music+") where idAlbum="+(idAlbum+1)
+                        +RelationContract.RelationEntry.TABLE_NAME+"."+RelationContract.RelationEntry.COLUMN_ID_Music+") where idAlbum="+idAlbum
                 , null
             )
         } catch (e: SQLiteException) {
@@ -153,5 +156,95 @@ class musicdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
             }
         }
         return music_model
+    }
+    fun addSong(song: SongInfo) {
+        val query = String.format(
+            "SELECT * FROM %s WHERE %s = \"%s\"",
+            MusicContract.MusicEntry.TABLE_NAME,
+            MusicContract.MusicEntry.COLUMN_URL_MUSIC,
+            song.mSongURL
+        )
+        val db = this.writableDatabase
+        var cursor: Cursor? = null
+        try {
+            cursor = db.rawQuery(query, null)
+        } catch (e: Exception) {
+            db.execSQL(SQL_CREATE_ENTRIES)
+        }
+        if (cursor !== null) {
+            cursor.moveToFirst()
+            if (cursor.count == 0) {
+                val values = ContentValues()
+                values.put(MusicContract.MusicEntry.COLUMN_URL_MUSIC, song.mSongURL)
+                values.put(MusicContract.MusicEntry.COLUMN_NAME_MUSIC, song.mTitle)
+                values.put(MusicContract.MusicEntry.COLUMN_AUTHOR_MUSIC, song.mAuthorName)
+                values.put(MusicContract.MusicEntry.COLUMN_DURATION_MUSIC, song.mSize)
+                values.put(MusicContract.MusicEntry.COLUMN_ISLIKE_MUSIC, false)
+                db.insert(MusicContract.MusicEntry.TABLE_NAME, null, values)
+            }
+        }
+        db.close()
+    }
+    fun getSongByUrl(url: String): music_model? {
+        val query = String.format(
+            "SELECT * FROM %s WHERE %s = \"%s\"",
+            MusicContract.MusicEntry.TABLE_NAME,
+            MusicContract.MusicEntry.COLUMN_URL_MUSIC,
+            url
+        )
+
+        val dbread = this.readableDatabase
+        val cursor: Cursor = dbread.rawQuery(query, null)
+        var music: music_model? = null
+        if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_ID_MUSIC))
+            val url = cursor.getString(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_URL_MUSIC))
+            val name = cursor.getString(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_NAME_MUSIC))
+            val author = cursor.getString(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_AUTHOR_MUSIC))
+            val duration = cursor.getInt(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_DURATION_MUSIC))
+            val isLike = cursor.getInt(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_ISLIKE_MUSIC)) > 0
+            music = music_model(id, url, name, author, duration, isLike)
+        }
+
+        dbread.close()
+        return music
+    }
+
+    fun likeOrUnlikeSongByUrl(url: String) {
+        val query = String.format(
+            "SELECT * FROM %s WHERE %s = \"%s\"",
+            MusicContract.MusicEntry.TABLE_NAME,
+            MusicContract.MusicEntry.COLUMN_URL_MUSIC,
+            url
+        )
+        val db = this.writableDatabase
+        var cursor: Cursor? = null
+        try {
+            cursor = db.rawQuery(query, null)
+        } catch (e: Exception) {
+            db.execSQL(SQL_CREATE_ENTRIES)
+        }
+        if (cursor !== null) {
+            if (cursor.moveToFirst()) {
+                val values = ContentValues()
+                val id = cursor.getInt(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_ID_MUSIC))
+                val isLike = cursor.getInt(cursor.getColumnIndex(MusicContract.MusicEntry.COLUMN_ISLIKE_MUSIC)) > 0
+                values.put(MusicContract.MusicEntry.COLUMN_ISLIKE_MUSIC, !isLike)
+                val where = "${MusicContract.MusicEntry.COLUMN_ID_MUSIC}=?"
+                val whereArgs =
+                    arrayOf(java.lang.String.valueOf(id))
+                db.update(MusicContract.MusicEntry.TABLE_NAME, values, where, whereArgs)
+            }
+        } else {
+            val values = ContentValues()
+            val song = Service.listSongs[Service.currentPosition]
+            values.put(MusicContract.MusicEntry.COLUMN_URL_MUSIC, song.mSongURL)
+            values.put(MusicContract.MusicEntry.COLUMN_NAME_MUSIC, song.mTitle)
+            values.put(MusicContract.MusicEntry.COLUMN_AUTHOR_MUSIC, song.mAuthorName)
+            values.put(MusicContract.MusicEntry.COLUMN_DURATION_MUSIC, song.mSize)
+            values.put(MusicContract.MusicEntry.COLUMN_ISLIKE_MUSIC, true)
+            db.insert(MusicContract.MusicEntry.TABLE_NAME, null, values)
+        }
+        db.close()
     }
 }

@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
 import com.example.mediaplayer.adapter.adaptersong
 import com.example.mediaplayer.adapter.spacealbum
 import com.example.mediaplayer.dbhelper.albumdbhelper
@@ -15,7 +14,6 @@ import com.example.mediaplayer.model.album_model
 import com.example.mediaplayer.model.music_model
 import kotlinx.android.synthetic.main.activity_detail_album_like.*
 import kotlinx.android.synthetic.main.activity_detail_album_like.nav_bar_default
-import kotlinx.android.synthetic.main.activity_player_processing.*
 
 class Detail_album : AppCompatActivity() {
     lateinit var music: musicdbhelper//lop nay chua cac phuong thuc de tuong tac voi bang music
