@@ -6,12 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mediaplayer.AlbumLike
 import com.example.mediaplayer.R
-import com.example.mediaplayer.detail_album_like
+import com.example.mediaplayer.Detail_album
 import com.example.mediaplayer.model.album_model
 
 class adapteralbumlike(var mlistAlbumLike: MutableList<album_model>,var context:Context) : RecyclerView.Adapter<adapteralbumlike.ViewHolder>() {
@@ -28,7 +26,7 @@ class adapteralbumlike(var mlistAlbumLike: MutableList<album_model>,var context:
         val malbum: album_model = mlistAlbumLike[position]
         holder.namealbum.text = malbum.name
         holder.btn_chitiet.setOnClickListener {
-            var intent: Intent = Intent(context, detail_album_like::class.java)
+            var intent: Intent = Intent(context, Detail_album::class.java)
             intent.putExtra("idAlbum",position)
             intent.putExtra("tenalbum",mlistAlbumLike[position].name)
             startActivity(context,intent,intent.extras)

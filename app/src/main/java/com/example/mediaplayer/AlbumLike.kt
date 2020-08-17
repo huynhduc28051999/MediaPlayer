@@ -3,12 +3,9 @@ package com.example.mediaplayer
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mediaplayer.adapter.adapteralbum
 import com.example.mediaplayer.adapter.adapteralbumlike
-import com.example.mediaplayer.adapter.spacealbum
 import com.example.mediaplayer.dbhelper.albumdbhelper
 import com.example.mediaplayer.model.album_model
 import kotlinx.android.synthetic.main.activity_album_like.*
@@ -19,6 +16,8 @@ class AlbumLike : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_like)
+        setSupportActionBar(nav_bar_default as androidx.appcompat.widget.Toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         album = albumdbhelper(this)
         mlistAlbumLike = album.readAllAlbumLike()
         album(mlistAlbumLike, rv_album_favorite, this)

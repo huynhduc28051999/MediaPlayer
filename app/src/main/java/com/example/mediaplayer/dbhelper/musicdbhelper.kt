@@ -21,7 +21,7 @@ class musicdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
                     MusicContract.MusicEntry.COLUMN_NAME_MUSIC + " TEXT," +
                     MusicContract.MusicEntry.COLUMN_AUTHOR_MUSIC + " TEXT," +
                     MusicContract.MusicEntry.COLUMN_DURATION_MUSIC + " INTEGER," +
-                    MusicContract.MusicEntry.COLUMN_ISLIKE_MUSIC + " INTEGER)"
+                    MusicContract.MusicEntry.COLUMN_ISLIKE_MUSIC + " BOOLEAN)"
         private val SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + MusicContract.MusicEntry.TABLE_NAME
     }

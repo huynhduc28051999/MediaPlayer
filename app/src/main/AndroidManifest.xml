@@ -17,16 +17,18 @@
         <activity
             android:name=".SongLike"
             android:label="@string/title_activity_song_like"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".model.SearchMainActivity" />
-        <activity android:name=".detail_album_like"></activity>
-        <activity android:name=".AlbumLike" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".Detail_album"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".AlbumLike"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".PlayerProcessing" />
-        <activity android:name=".FavoriteActivity" />
         <activity
             android:name=".LoadAllSong"
             android:parentActivityName=".MainActivity" />

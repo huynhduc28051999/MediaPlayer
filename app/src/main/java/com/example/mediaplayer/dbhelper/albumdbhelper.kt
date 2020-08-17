@@ -6,8 +6,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.mediaplayer.DBHandler.DatabaseHandlerMusic
 import com.example.mediaplayer.model.album_model
 import com.example.mediaplayer.model.album_model_like
+import com.example.mediaplayer.model.music_model
 
 class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
@@ -16,10 +18,10 @@ class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         val DATABASE_NAME = "MediaPlayer"
 
         private val SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + AlbumContract.AlbumEntry.TABLE_NAME + " (" +
+            "CREATE TABLE IF NOT EXISTS " + AlbumContract.AlbumEntry.TABLE_NAME + " (" +
                     AlbumContract.AlbumEntry.COLUMN_ID_ALBUM + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     AlbumContract.AlbumEntry.COLUMN_NAME_ALBUM + " TEXT," +
-                    AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM + " INTEGER)"
+                    AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM + " BOOLEAN)"
 
         private val SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + AlbumContract.AlbumEntry.TABLE_NAME
@@ -80,7 +82,7 @@ class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         val db = writableDatabase
         var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery("select * from " + AlbumContract.AlbumEntry.TABLE_NAME+" where "+AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM+"=0", null)
+            cursor = db.rawQuery("select * from " + AlbumContract.AlbumEntry.TABLE_NAME+" where "+AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM+"=1", null)
         } catch (e: SQLiteException) {
             db.execSQL(SQL_CREATE_ENTRIES)
             return mutableListOf()
@@ -103,5 +105,52 @@ class albumdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
             }
         }
         return album_model
+    }
+    fun getAlbum(idAlbum: Int): album_model? {
+        val db = writableDatabase
+        db.execSQL(SQL_CREATE_ENTRIES)
+        var cursor: Cursor? = null
+        val query = String.format(
+            "SELECT * FROM %s WHERE %s = %s",
+            AlbumContract.AlbumEntry.TABLE_NAME,
+            AlbumContract.AlbumEntry.COLUMN_ID_ALBUM,
+            idAlbum
+        )
+        var album: album_model? = null
+        try {
+            cursor = db.rawQuery(query, null)
+            if (cursor!!.moveToFirst()) {
+                val id = cursor.getInt(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_ID_ALBUM))
+                val name = cursor.getString(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_NAME_ALBUM))
+                val isLike = cursor.getInt(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM)) > 0
+                album = album_model(id, name, isLike)
+            }
+        } catch (e: SQLiteException) {
+            db.execSQL(SQL_CREATE_ENTRIES)
+        }
+        db.close()
+        return  album
+    }
+    fun likeOrNotLike(idAlbum: Int) {
+        val db = writableDatabase
+        db.execSQL(SQL_CREATE_ENTRIES)
+        var cursor: Cursor? = null
+        val query = String.format(
+            "SELECT * FROM %s WHERE %s = %s",
+            AlbumContract.AlbumEntry.TABLE_NAME,
+            AlbumContract.AlbumEntry.COLUMN_ID_ALBUM,
+            idAlbum
+        )
+        cursor = db.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            val values = ContentValues()
+            val id = cursor.getInt(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_ID_ALBUM))
+            val isLike = cursor.getInt(cursor.getColumnIndex(AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM)) > 0
+            values.put(AlbumContract.AlbumEntry.COLUMN_ISLIKE_ALBUM, !isLike)
+            val where = "${AlbumContract.AlbumEntry.COLUMN_ID_ALBUM}=?"
+            val whereArgs =
+                arrayOf(java.lang.String.valueOf(id))
+            db.update(AlbumContract.AlbumEntry.TABLE_NAME, values, where, whereArgs)
+        }
     }
 }

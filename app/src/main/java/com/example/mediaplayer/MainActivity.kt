@@ -36,9 +36,9 @@ import kotlinx.android.synthetic.main.textview.*
 
 
 class MainActivity : AppCompatActivity(), CreateAlbumDialog.DialogListener {
-    private var mlistAlbum = mutableListOf<album_model>()//Danh sach cac album
-    private var mlistSong = mutableListOf<music_model>()//Danh sach nhac co trong he thong
-    private var mlistAlbumLike = mutableListOf<album_model_like>()
+    private var mListAlbum = mutableListOf<album_model>()//Danh sach cac album
+    private var mListSong = mutableListOf<music_model>()//Danh sach nhac co trong he thong
+    private var mListAlbumLike = mutableListOf<album_model_like>()
     lateinit var relation:relationdbhelper//lop nay chua cac phuong thuc de tuong tac với bảng relation
     lateinit var album:albumdbhelper//lớp này chứa các phương thức để tương tác với bảng album
     lateinit var music:musicdbhelper//lop nay chua cac phuong thuc de tuong tac voi bang music
@@ -150,15 +150,12 @@ fun home(topAppBar: MaterialToolbar, context: Context) {
     topAppBar.setOnMenuItemClickListener { menuItem ->
         when (menuItem.itemId) {
             R.id.favorite -> {
-                // Handle favorite icon press
-//                var intent:Intent = Intent(context, FavoriteActivity::class.java)
-//                startActivity(context,intent,intent.extras)
                 val linearLayout = (context as Activity).findViewById<View>(R.id.linearAction)
                 val inflater =
                     context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 if ((linearLayout as ViewGroup).childCount === 0) {
                     val view: View =
-                        inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout);
+                        inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout)
                     val like = view.findViewById<View>(R.id.btn_like)
                     like.setOnClickListener {
                         val intent: Intent = Intent(context, SongLike::class.java)
@@ -171,18 +168,23 @@ fun home(topAppBar: MaterialToolbar, context: Context) {
                     }
                 } else {
                     (linearLayout as ViewGroup).removeViewAt(0)
-                    var view:View=inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout);
+                    var view:View=inflater.inflate(R.layout.area_liked, linearLayout as LinearLayout)
                     var btn_album=view.findViewById(R.id.btn_album) as LinearLayout
                     btn_album.setOnClickListener {
                         var intent:Intent = Intent(context, AlbumLike::class.java)
                         startActivity(context,intent,intent.extras)
+                    }
+
+                    val like = view.findViewById<View>(R.id.btn_like)
+                    like.setOnClickListener {
+                        val intent: Intent = Intent(context, SongLike::class.java)
+                        startActivity(context, intent, intent.extras)
                     }
                 }
                 true
             }
             R.id.searchItem -> {
                 // Handle search icon press
-                lateinit var music: musicdbhelper//lop nay chua cac phuong thuc de tuong tac voi bang music
                 val linearLayout = (context as Activity).findViewById<View>(R.id.linearAction)
                 val inflater =
                     context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -193,12 +195,25 @@ fun home(topAppBar: MaterialToolbar, context: Context) {
                     search.setOnClickListener {
                         val nameSearch = view.findViewById<View>(R.id.name_search) as EditText
                         val intent: Intent = Intent(context, SearchActivity::class.java)
-                        intent.putExtra("nodung", nameSearch.text.toString())
+                        val bundle = Bundle()
+                        bundle.putString("noidung", nameSearch.text.toString())
+                        intent.putExtras(bundle)
                         startActivity(context, intent, intent.extras)
                     }
                 } else {
                     (linearLayout as ViewGroup).removeViewAt(0)
                     inflater.inflate(R.layout.textview, linearLayout as LinearLayout);
+                    val view: View =
+                        inflater.inflate(R.layout.textview, linearLayout as LinearLayout);
+                    val search = view.findViewById<View>(R.id.search)
+                    search.setOnClickListener {
+                        val nameSearch = view.findViewById<View>(R.id.name_search) as EditText
+                        val intent: Intent = Intent(context, SearchActivity::class.java)
+                        val bundle = Bundle()
+                        bundle.putString("noidung", nameSearch.text.toString())
+                        intent.putExtras(bundle)
+                        startActivity(context, intent, intent.extras)
+                    }
                 }
                 true
             }

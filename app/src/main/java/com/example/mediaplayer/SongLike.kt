@@ -2,7 +2,6 @@ package com.example.mediaplayer
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +9,7 @@ import com.example.mediaplayer.adapter.adaptersong
 import com.example.mediaplayer.adapter.spacealbum
 import com.example.mediaplayer.dbhelper.musicdbhelper
 import com.example.mediaplayer.model.music_model
-import kotlinx.android.synthetic.main.search.*
+import kotlinx.android.synthetic.main.activity_song_like.*
 
 class SongLike : AppCompatActivity() {
     lateinit var music: musicdbhelper
@@ -18,7 +17,9 @@ class SongLike : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.content_song_like)
+        setContentView(R.layout.activity_song_like)
+        setSupportActionBar(nav_bar_default as androidx.appcompat.widget.Toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         var intent = intent
         music= musicdbhelper(this)
         var listMusic = music.readAllMusic()

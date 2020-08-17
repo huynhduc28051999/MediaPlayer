@@ -2,7 +2,6 @@ package com.example.mediaplayer
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,16 +18,20 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search)
+        setSupportActionBar(nav_bar_default as androidx.appcompat.widget.Toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         var intent = intent
-        var nodung = intent.getStringExtra("nodung")
-        music= musicdbhelper(this)
-        var listMusic = music.readAllMusic()
-        listMusic.forEach {
-            if(it.name.contains(nodung)){
-                listSearch.add(it)
+        val bundle = intent.extras
+        if (bundle !== null){
+            var nodung = bundle.getString("noidung")
+            music= musicdbhelper(this)
+            var listMusic = music.readAllMusic()
+            listMusic.forEach {
+                if(it.name.contains(nodung!!, ignoreCase = true)){
+                    listSearch.add(it)
+                }
             }
         }
-
         song(listSearch,rv_search,this)
     }
     fun song(mlistSong: MutableList<music_model>, rv_song: RecyclerView, context: Context) {
