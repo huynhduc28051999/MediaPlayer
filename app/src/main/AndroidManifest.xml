@@ -23,9 +23,9 @@
             android:label="@string/title_activity_search"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".model.SearchMainActivity" />
-        <activity android:name=".createAlbumDialog" />
+        <activity android:name=".detail_album_like"></activity>
+        <activity android:name=".AlbumLike" />
         <activity android:name=".PlayerProcessing" />
-        <activity android:name=".detail_album" />
         <activity android:name=".FavoriteActivity" />
         <activity
             android:name=".LoadAllSong"

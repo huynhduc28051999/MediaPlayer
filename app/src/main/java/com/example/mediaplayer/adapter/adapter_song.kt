@@ -43,7 +43,7 @@ class adaptersong(var mlistSong: MutableList<music_model>, val context: Context)
         holder.Athornamesong.text = msong.author.substring(0, maxAuthorName)
         holder.play.setOnClickListener {
             try {
-                Service.startPlay(position)
+                Service.startPlay(msong.name)
                 var intent = Intent(context, PlayerProcessing::class.java)
                 val bundle = Bundle()
                 bundle.putString("mTitle", msong.name)
