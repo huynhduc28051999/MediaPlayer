@@ -27,7 +27,7 @@ class adapteralbumlike(var mlistAlbumLike: MutableList<album_model>,var context:
         holder.namealbum.text = malbum.name
         holder.btn_chitiet.setOnClickListener {
             var intent: Intent = Intent(context, Detail_album::class.java)
-            intent.putExtra("idAlbum",position)
+            intent.putExtra("idAlbum", malbum.id)
             intent.putExtra("tenalbum",mlistAlbumLike[position].name)
             startActivity(context,intent,intent.extras)
         }

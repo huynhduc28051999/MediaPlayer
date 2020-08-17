@@ -14,7 +14,7 @@ class relationdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
         val DATABASE_VERSION = 1
         val DATABASE_NAME = "MediaPlayer"
 
-        private val SQL_CREATE_ENTRIES =
+        val SQL_CREATE_ENTRIES =
             "CREATE TABLE IF NOT EXISTS " + RelationContract.RelationEntry.TABLE_NAME + " (" +
                     RelationContract.RelationEntry.COLUMN_ID_Music + " INTEGER, " +
                     RelationContract.RelationEntry.COLUMN_ID_Album + " INTEGER, " +

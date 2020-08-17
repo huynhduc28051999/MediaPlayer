@@ -103,6 +103,7 @@ class musicdbhelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
     fun readAllMusicidAlbum(idAlbum: Int): MutableList<music_model> {
         val music_model = mutableListOf<music_model>()
         val db = writableDatabase
+        db.execSQL(relationdbhelper.SQL_CREATE_ENTRIES)
         var cursor: Cursor? = null
         try {
             cursor = db.rawQuery(
